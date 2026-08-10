@@ -89,7 +89,7 @@ Nothing above that: no `# vX` heading, no date line, no restatement of the title
    `_<N> commits · YYYY-MM-DD → YYYY-MM-DD_`
 3. **`### <emoji> <Theme> — <thesis>`** section headers. Themes come from what the log
    actually contains, never from commit types or scope prefixes. The trailing thesis says
-   what moved in that area: `### 📄 Case studies — Deejiar lands`. **Take the emoji from
+   what moved in that area: `### 📄 Case studies — the flagship study lands`. **Take the emoji from
    the table below** — a theme that changes glyph between releases reads as a different
    area to anyone skimming the tag list.
 4. **Bullets are `- **<claim>** — <evidence>`.** The bold lead-in is the takeaway; the text
@@ -153,7 +153,7 @@ _2 commits · 2026-08-07 → 2026-08-07_
 ```markdown
 _11 commits · 2026-08-08 → 2026-08-09_
 
-### 📄 Case studies — Deejiar lands
+### 📄 Case studies — the flagship study lands
 - **Card-only projects are now a real schema shape** — a project with no `cover` builds no
   page and must set `href`, enforced by a refinement, so a half-filled case study fails the
   build instead of rendering with holes.
