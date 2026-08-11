@@ -15,9 +15,7 @@
 #   Codex         <project>/.agents/skills/<name>   → $<name>
 #   --user        ~/.claude/skills, ~/.agents/skills
 #
-# One source file per command lives at skills/<name>/SKILL.md. `commands/` holds
-# symlinks to the same files for the older `.claude/commands` install; you do not
-# need it if you use this script.
+# One source file per command lives at skills/<name>/SKILL.md.
 
 set -euo pipefail
 

@@ -1,1 +1,0 @@
-../skills/team/SKILL.md

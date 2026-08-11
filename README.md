@@ -71,9 +71,6 @@ trigger without being named.
 > they only ever lived in your home directory — they cannot ship inside a repo, which is the
 > whole point of sharing a workflow.
 
-Older installs that symlinked `.claude/commands` still work: `commands/` is kept as symlinks
-pointing at the same files.
-
 ## What actually makes them work
 
 The commands are long because the useful parts are the constraints, not the instructions.

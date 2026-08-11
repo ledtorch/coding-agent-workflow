@@ -1,1 +1,0 @@
-../skills/inspect/SKILL.md
