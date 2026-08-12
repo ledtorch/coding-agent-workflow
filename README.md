@@ -1,6 +1,16 @@
 # A shipping workflow for Claude Code and Codex
 
-Nine commands that turn an agent from something you chat with into something you can run a
+```bash
+git clone https://github.com/ledtorch/coding-agent-workflow.git ~/coding-agent-workflow && ~/coding-agent-workflow/install.sh --user
+```
+
+Then open your agent in any project and run **`/setup`** — `$setup` in Codex. It reads your
+codebase, asks how you want the workflow to run there, and takes it from there. You can stop
+reading here.
+
+---
+
+Ten commands that turn an agent from something you chat with into something you can run a
 release through. They are not prompt templates — each one is a contract about where judgment
 sits, what counts as verified, and what the agent is not allowed to do on its own.
 
@@ -38,29 +48,50 @@ Supporting commands:
 
 | | |
 |---|---|
+| [`/setup`](skills/setup/SKILL.md) | Run once per project. Reads the codebase, then asks whether to build the `references/` layer or run without it. |
 | [`/trim`](skills/trim/SKILL.md) | Reduces a named file to its smallest correct form. Zero information loss, behavior identical. |
 | [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift. |
 | [`/team`](skills/team/SKILL.md) | Runs a request as a small agent DAG with two review gates and a critic that must disagree. |
 | [`/name`](skills/name/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
 
-## Installing
+## What that install actually did
+
+The line at the top runs once per machine, and the two halves do different jobs — only one
+of which needs an agent.
+
+`install.sh` is plain bash. It symlinks the skills into `~/.claude/skills` and
+`~/.agents/skills`, and that is the entire reason `/setup` exists: agents discover commands
+by scanning those directories, so before the script runs, `/setup` is invisible no matter
+what you type. Cloning alone is not enough.
+
+`/setup` is the half that needs an agent, because it reads your codebase before asking
+anything. Every project after the first starts here — no shell command, ever again.
+
+<details>
+<summary>Installing into one project instead</summary>
 
 ```bash
-git clone https://github.com/ledtorch/coding-agent-workflow.git
-cd coding-agent-workflow
 ./install.sh /path/to/your-project        # both agents
+./install.sh /path/to/your-project claude # or: codex
 ```
 
-`./install.sh /path/to/project claude` or `... codex` installs one only, and
-`./install.sh --user` installs for every project at once. The script symlinks rather than
-copies, so `git pull` here updates every project you installed into.
+Links into `<project>/.claude/skills` and `<project>/.agents/skills` — worth it when you
+want the workflow scoped to one repo, or committed alongside it. Add those two paths to the
+project's `.gitignore` unless you mean to share them: the symlinks store absolute paths, so
+they resolve to nothing on a teammate's machine.
+
+</details>
+
+Skills are symlinked rather than copied, so `git pull` in the clone updates every install at
+once. Keep the clone somewhere permanent — moving or deleting it breaks every install, and
+does it silently.
 
 What it links, if you'd rather do it by hand:
 
-| Agent | Directory | Invoked as |
-|---|---|---|
-| Claude Code | `<project>/.claude/skills/<name>` | `/plan` |
-| Codex | `<project>/.agents/skills/<name>` | `$plan` |
+| Agent | `--user` | One project | Invoked as |
+|---|---|---|---|
+| Claude Code | `~/.claude/skills/<name>` | `<project>/.claude/skills/<name>` | `/plan` |
+| Codex | `~/.agents/skills/<name>` | `<project>/.agents/skills/<name>` | `$plan` |
 
 Codex scans `$CWD/.agents/skills` → `$REPO_ROOT/.agents/skills` → `$HOME/.agents/skills`,
 and follows symlinked folders. It will also pick a skill *implicitly* when your request
@@ -99,17 +130,37 @@ fail loudly if it was skipped.
 **State belongs in a file, not a chat.** Plan documents are the unit of work; `/handoff`
 exists because context decays and the next session starts from zero.
 
+## The two ways to run
+
+Most commands route through a `references/` directory holding the project's own docs — an
+index, a conventions file, an architecture file. That layer is the difference between an
+agent that checks a claim against something and one that checks it against its own memory.
+It is also the part only you can supply, which is what `/setup` exists to resolve:
+
+| | **Grounded** | **General** |
+|---|---|---|
+| `references/` | built from your real codebase | absent |
+| Commands read | project docs, then code | code only |
+| `/plan`, `/inspect` cite | `file:line` **and** a doc | `file:line` only |
+| Cost to set up | one session, with your review | nothing |
+| Failure mode | a stale doc asserts something false | the agent re-derives, sometimes wrong |
+
+General mode is a real choice, not a degraded one — the absence of `references/SKILL.md` is
+itself the switch, and every command drops into it without complaint. Run `/setup` again to
+switch over whenever the project grows into wanting the docs.
+
+Grounded mode is worth it once more than one person touches the code, or once "how do we do
+X here" has an answer that isn't obvious from any single file.
+
 ## Adapting them
 
-They assume a `references/` directory holding the project's own docs — an index, a
-conventions file, an architecture file — and several commands refuse to start until they
-have read the relevant ones. That directory is the part you supply. Without it the commands
-still run, but they lose the thing that makes them accurate: a place to check a claim
-against something other than the model's memory.
+`references/` is where everything project-specific belongs. **Don't edit the `SKILL.md`
+files** — they are symlinks into your clone, so a change there rewrites the workflow for
+every project you installed into.
 
-Some commands carry examples from the project they grew in — a static-site deploy step in
-`/release`, an Astro dependency graph in `/plan`. Replace them with your own; the structure
-around them is what transfers.
+Some commands still carry examples from the project they grew in — a static-site deploy step
+in `/release`, an Astro dependency graph in `/plan`. Those are illustrations of shape, not
+instructions; the structure around them is what transfers.
 
 Each command opens with the shell commands it wants run first (branch, status, diff) rather
 than pre-injecting them, because that is what makes one file work in both agents. If you use
