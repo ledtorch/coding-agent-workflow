@@ -31,9 +31,10 @@ isn't in the doc.
 
 > **Why batch is safe without commits.** Checkpointing (commits between tasks) and batching
 > (proceeding to the next task) are different things. Commits stay forbidden
-> (`references/SKILL.md` rule 1); what actually gates the run is **per-task
-> verification** — a task that doesn't verify clean halts the run before it contaminates
-> later work — plus **per-task patch snapshots** (below) as commit-free rollback points.
+> (this workflow's standing rule 1, restated in `references/SKILL.md` where that exists);
+> what actually gates the run is **per-task verification** — a task that doesn't verify
+> clean halts the run before it contaminates later work — plus **per-task patch snapshots**
+> (below) as commit-free rollback points.
 >
 > **The honest trade:** without a user review between tasks, a slightly-off interpretation
 > in an early task can propagate before the user sees it. The per-task acceptance criteria
@@ -61,12 +62,17 @@ the user can interrupt.
    table, and Logic Map bound what every task may do.
 2. `references/SKILL.md` — route to the reference docs this plan's surface
    touches, and read them. The plan's *References Read* section lists what planning consulted.
-3. `references/conventions.md` — code rules, design tokens, component patterns.
+3. `references/development/conventions.md` — code rules, design tokens, component patterns.
    Required before any code change, per SKILL.md.
-4. `references/architecture.md` — where the code goes, and the content-collection
+4. `references/development/architecture.md` — where the code goes, and the content-collection
    contract.
 
 Skipping any is a build failure — restart from B.0.
+
+> **No `references/SKILL.md`?** The project runs in **general mode** — item 1 still binds,
+> items 2–4 are skipped, and the conventions come from the surrounding code. Don't invent a
+> reference doc, and don't halt over its absence. [`/setup`](../setup/SKILL.md) builds the
+> layer if the accuracy is wanted back.
 
 
 ## The run loop

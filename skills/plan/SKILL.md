@@ -27,6 +27,10 @@ Planning is **read-only** — the output is a plan document, never code.
 Skipping Step 0 is a planning failure — restart here. Docs drift: `grep` any file/route/
 flag a doc names before building on it.
 
+> **No `references/SKILL.md`?** The project runs in **general mode** — skip Step 0 and plan
+> from the codebase itself. Don't invent a reference doc, and don't halt over its absence.
+> [`/setup`](../setup/SKILL.md) builds the layer if the accuracy is wanted back.
+
 ## Step 1: Break the Request Down
 
 Slice **vertically** — each task delivers one complete, testable path, not one layer:
@@ -266,6 +270,7 @@ tooling (`/build`, later sessions) reads this doc directly by path. After writin
 
 Acceptance criteria are per-task ("did we build the right thing?") and sit on top of the
 project-wide Definition of Done, the standing bar every task clears before it counts as
-done. See `references/SKILL.md` § Standing rules.
+done. See `references/SKILL.md` § Standing rules where that exists; in general mode, the
+standing bar is whatever the codebase's own tests and build already enforce.
 
 **Last Updated**: 2026-07-19

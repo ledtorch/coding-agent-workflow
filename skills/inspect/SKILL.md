@@ -36,6 +36,10 @@ document, and the user decides whether any of it gets built. One exception: a
 A finding that contradicts a reference doc is a finding **about the doc too**. Record both;
 the doc is as likely to be wrong as the code.
 
+> **No `references/SKILL.md`?** The project runs in **general mode** — skip Step 0 and audit
+> against the codebase itself. Don't invent a reference doc, and don't halt over its absence.
+> [`/setup`](../setup/SKILL.md) builds the layer if the accuracy is wanted back.
+
 ## Step 1: Read every target completely
 
 Whole files, not excerpts. A conclusion drawn from a grep hit is a hypothesis, not a

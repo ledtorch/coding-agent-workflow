@@ -27,6 +27,8 @@ if [[ "${1:-}" == "--user" ]]; then
   CLAUDE_DIR="$HOME/.claude/skills"
   CODEX_DIR="$HOME/.agents/skills"
   WHERE="your home directory (all projects)"
+  NEXT="Done — every project on this machine, now and later. Open your agent in
+any project and run:"
 else
   PROJECT="${1:-}"
   AGENT="${2:-both}"
@@ -36,6 +38,7 @@ else
   CLAUDE_DIR="$PROJECT/.claude/skills"
   CODEX_DIR="$PROJECT/.agents/skills"
   WHERE="$PROJECT"
+  NEXT="Done. Next step — open your agent in that project and run:"
 fi
 
 case "$AGENT" in
@@ -56,19 +59,28 @@ for dir in "${TARGETS[@]}"; do
     ln -sfn "$skill" "$dir/$name"
     n=$((n + 1))
   done
-  echo "  ✓ $n skills → ${dir/#$HOME/\~}"
+  echo "  ✓ $n skills → ${dir/#$HOME/~}"
 done
+
+printf '\n%s\n' "$NEXT"
 
 cat <<'EOF'
 
-Done. Invoke them as:
+  Claude Code   /setup
+  Codex         $setup
+
+It reads the codebase, then asks you to choose how the workflow runs there:
+
+  Grounded  it builds a references/ layer — doc index, architecture,
+            conventions — from your real code, for you to correct.
+            The commands then check claims against it.
+  General   nothing is written. The commands work from the code alone.
+            Reversible: run /setup again whenever you want the docs.
+
+Then the rest:
   Claude Code   /plan   /build   /inspect   /commit   /release
   Codex         $plan   $build   $inspect   $commit   $release
 
 Codex also picks a skill implicitly when your request matches its description —
 say "audit this file for dead code" and $inspect can trigger on its own.
-
-⚠️  These commands assume a `references/` directory in your project holding the
-docs they route through (SKILL.md index, conventions.md, architecture.md). See
-the README — the commands are written to be edited, not used verbatim.
 EOF

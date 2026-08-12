@@ -30,6 +30,10 @@ Blocking, in order:
 
 Cite both reads in the Gate 1 checklist as the first row(s). Skipping either is a planning failure — roll back to step 0.
 
+> **No `references/SKILL.md`?** The project runs in **general mode** — skip this step and work
+> from the codebase itself. Don't invent a reference doc, and don't halt over its absence.
+> [`/setup`](../setup/SKILL.md) builds the layer if the accuracy is wanted back.
+
 ## 1. Interpret
 Extract: real intent · success shape (advice / fix / comparison / plan) · scope · destructive?
 
