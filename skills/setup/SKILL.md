@@ -77,8 +77,9 @@ State it so the user can interrupt before any file moves:
 carrying the marker `Stub from install.sh`. A file with the marker has never been filled:
 treat it as absent and overwrite it freely. Only a file *without* the marker is the user's,
 and that one is never overwritten without showing the diff first.
-`references/development/commands/` is symlinks to the workflow itself — not a doc, never
-audited, never edited.
+`references/development/commands/` holds the commands themselves, copied in by the
+installer. They are the project's to edit, but not *yours* to edit during a setup — they are
+tooling, not project knowledge, and nothing here audits or rewrites them.
 
 ## Step 2A: Adopt — wire into the docs that exist
 
@@ -213,8 +214,9 @@ they know which inferences are wrong. Their corrections are the point of the exe
 docs are only worth what this review puts into them.
 
 Then remind them: `references/` belongs to **their** repo and should be committed. It is
-project knowledge, not tooling. The symlinks are not — those resolve to nothing on a
-teammate's machine, who runs `install.sh` themselves.
+project knowledge, not tooling. Commit `.claude/skills/` and `.agents/skills/` too — both
+hops are relative and resolve inside the repo, so a teammate who clones it has the commands
+without running the installer.
 
 ## If the user stops here
 
@@ -228,9 +230,10 @@ Setup is not a gate. Say so plainly rather than pressing:
 
 ## Constraints
 
-**Never edit the workflow's own `SKILL.md` files.** They are symlinks into a shared clone — an
-edit there silently rewrites the workflow for every project installed from it. Everything
-project-specific belongs in `references/`.
+**Never edit the commands.** `references/development/commands/` belongs to the person running
+this project, who may tune it whenever they like — but a setup that quietly rewrites the
+command it is being run by is indistinguishable from a bug. Everything you write belongs in
+the doc layer.
 
 **Never overwrite a doc the user wrote.** Diff first, apply on approval. The only files you
 overwrite freely are the ones still carrying the `Stub from install.sh` marker.

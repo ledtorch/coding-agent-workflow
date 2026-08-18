@@ -12,6 +12,10 @@ directory, never the machine:
 ~/coding-agent-workflow/install.sh --init   # init  — it doesn't, so write the whole layer
 ```
 
+The commands are copied into the project, so they become yours to edit and no two projects
+affect each other. Re-run any time to pick up new ones; `--update` also replaces the ones you
+have edited, and nothing else ever does.
+
 Then open your agent there and run **`/setup`** — `$setup` in Codex. It reads your codebase
 and finishes whichever half the script couldn't. You can stop reading here.
 
@@ -108,7 +112,7 @@ are worth pinning.
 references/
 ├── SKILL.md                     the index — what to read, and when
 ├── development/
-│   ├── commands/                the ten commands — the only truth in this tree
+│   ├── commands/                the ten commands, copied — yours to edit
 │   │   ├── plan/SKILL.md
 │   │   ├── build/SKILL.md
 │   │   └── …
@@ -128,34 +132,40 @@ already yours. Init adds the four files above as TODO stubs, each carrying a mar
 looks for, so a stub is never mistaken for something someone wrote. **Neither mode ever
 overwrites an existing file.**
 
-### `references/development/commands/` is the source of truth
+### The commands are copies, and they are yours
 
 Agents discover commands by scanning `.claude/skills` and `.agents/skills` and nothing else.
-Those two directories are **pointers**, not homes — every entry hops through
-`references/development/commands/`, which is where the commands actually live for this
-project. One place to read them, one place to point at in review, one place a teammate finds
-without being told where to look.
+Those two directories are **pointers**; the commands themselves are real files under
+`references/development/commands/`, copied into the project at install time.
 
-The hops into `references/` are relative, so renaming or moving the project doesn't break
-them. Only the last hop — `references/development/commands/<name>` into the clone — is
-absolute.
+Copied, not symlinked, and that is the whole point:
 
-Skills are symlinked rather than copied, so `git pull` in the clone updates every project at
-once. Keep the clone somewhere permanent: moving or deleting it breaks every install, and
-does it silently.
+- **Edit them.** A command is a file in your repo. Change `/inspect`'s severity labels or
+  `/commit`'s types to suit this project — nothing you change here reaches any other project.
+- **Projects don't touch each other.** Two repos installed from the same clone share nothing.
+- **The clone stops mattering.** Move it, delete it, `git pull` it — every project already
+  installed keeps working, unchanged, because it holds its own copy.
 
-Commit `references/` — the docs are yours. Do not commit the symlinks; they store absolute
-paths and resolve to nothing on a teammate's machine, who runs `install.sh` themselves:
+Both symlink hops are **relative and stay inside the project**, so they survive a rename and
+resolve on someone else's machine. Commit all of it — `references/`, `.claude/skills/`,
+`.agents/skills/`. A teammate who clones the repo has the commands without running anything.
+
+Re-running `install.sh` never overwrites a command you changed. It reports which ones differ
+from the source and leaves the decision to you:
 
 ```
-references/development/commands/
-.claude/skills/
-.agents/skills/
+  ! 1 command(s) differ from the source. Nothing was overwritten.
+    Either you edited your copy, or the source moved on — only you can tell:
+
+      inspect    diff -ru references/development/commands/inspect ~/coding-agent-workflow/skills/inspect
 ```
+
+Read the diff, then `install.sh --update` to take the source version — losing your edits — or
+keep yours and ignore it. The script will not guess which you meant.
 
 ## The docs are frameworks, not content
 
-`install.sh` is plain bash — it can lay out the tree and the symlinks, but it cannot know
+`install.sh` is plain bash — it can copy the commands and lay out the tree, but it cannot know
 anything about your code. The reference docs are what `/setup` writes, by reading the
 codebase. Nothing is downloaded and nothing is copied from another project.
 
@@ -206,9 +216,13 @@ exists because context decays and the next session starts from zero.
 
 ## Adapting them
 
-`references/` is where everything project-specific belongs. **Don't edit the `SKILL.md`
-files** — they are symlinks into your clone, so a change there rewrites the workflow for
-every project you installed into.
+**Edit the commands.** `references/development/commands/<name>/SKILL.md` is your copy, in
+your repo, and changing it affects this project alone. The constraints are the valuable part,
+so tighten them where this project needs it rather than working around them.
+
+The one file to leave alone is the clone at `~/coding-agent-workflow` — edit there and you
+change what every *future* install starts from, which is a different decision from adapting
+one project.
 
 Some commands still carry examples from the project they grew in — a static-site deploy step
 in `/release`, an Astro dependency graph in `/plan`. Those are illustrations of shape, not

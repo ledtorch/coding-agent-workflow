@@ -4,21 +4,26 @@
 #
 #   ./install.sh                            # adopt — this directory, both agents
 #   ./install.sh --init                     # init  — also scaffold the references/ layer
+#   ./install.sh --update                   # take the source version of commands you changed
 #   ./install.sh claude                     # this directory, Claude Code only
 #   ./install.sh /path/to/project           # that project, both agents
-#   ./install.sh --init /path/to/project    # that project, scaffolded
 #
 # adopt (default)  the project already has references/SKILL.md. Links the commands and
 #                  writes no docs — /setup wires them into the index that exists.
 # init  (--init)   no doc layer yet. Also writes TODO stubs for the three paths the
 #                  commands read, plus references/features/, for /setup to fill.
 #
-# Commands are SYMLINKED, not copied — `git pull` in this repo updates every project at once.
+# Commands are COPIED, so each project owns its own. Edit them freely — nothing you change
+# here reaches another project, and deleting this clone breaks nothing already installed.
+# A copy you have edited is never overwritten; --update takes the source version instead.
 #
 # Targets:
-#   <project>/references/development/commands/<name>   the source of truth
+#   <project>/references/development/commands/<name>   real files, this project's own
 #   <project>/.claude/skills/<name>   → ../../references/development/commands/<name>
 #   <project>/.agents/skills/<name>   → ../../references/development/commands/<name>
+#
+# Those two hops are relative and stay inside the project, so commit all of it — a teammate
+# who clones the repo gets the commands without running anything.
 #
 # One source file per command lives at skills/<name>/SKILL.md.
 
@@ -31,16 +36,18 @@ usage() { awk 'NR>1 && /^#/ {sub(/^# ?/,""); print; next} NR>1 {exit}' "$0"; }
 
 # --- flags ------------------------------------------------------------------
 MODE=adopt
+UPDATE=0
 ARGS=()
 for arg in "$@"; do
   case "$arg" in
     --init)     MODE=init ;;
+    --update)   UPDATE=1 ;;
     -h|--help)  usage; exit 0 ;;
     --user)
       echo "--user is gone: the workflow installs into a project, not the machine." >&2
       echo "cd into the project and run this script there." >&2
       exit 2 ;;
-    -*) echo "unknown flag: $arg (use --init)" >&2; exit 2 ;;
+    -*) echo "unknown flag: $arg (use --init, --update)" >&2; exit 2 ;;
     *)  ARGS+=("$arg") ;;
   esac
 done
@@ -156,24 +163,72 @@ EOF
 echo "→ installing into $PROJECT  (mode: $MODE)"
 
 mkdir -p "$PROJECT/$HUB"
-n=0
+
+added=0; same=0; updated=0; migrated=0
+DIFFER=()
 for skill in "$SRC"/*/; do
-  ln -sfn "$skill" "$PROJECT/$HUB/$(basename "$skill")"
-  n=$((n + 1))
+  name="$(basename "$skill")"
+  dest="$PROJECT/$HUB/$name"
+
+  if [[ -L "$dest" ]]; then
+    # Left by an older symlinking install. Not a user edit — migrate it to a real copy.
+    rm -f "$dest"; cp -R "${skill%/}" "$PROJECT/$HUB/"; migrated=$((migrated + 1))
+  elif [[ ! -e "$dest" ]]; then
+    cp -R "${skill%/}" "$PROJECT/$HUB/"; added=$((added + 1))
+  elif diff -rq -x '.DS_Store' "${skill%/}" "$dest" >/dev/null 2>&1; then
+    same=$((same + 1))
+  elif [[ "$UPDATE" == 1 ]]; then
+    rm -rf "$dest"; cp -R "${skill%/}" "$PROJECT/$HUB/"; updated=$((updated + 1))
+  else
+    DIFFER+=("$name")
+  fi
 done
-echo "  ✓ $n commands → $HUB/"
+
+[[ $added    -gt 0 ]] && echo "  ✓ $added added        → $HUB/"
+[[ $migrated -gt 0 ]] && echo "  ✓ $migrated migrated     (symlink → real copy)"
+[[ $updated  -gt 0 ]] && echo "  ✓ $updated updated      (--update: source version taken)"
+[[ $same     -gt 0 ]] && echo "  = $same unchanged"
+
+# Commands this project has that the source no longer ships. Yours now — never removed.
+EXTRA=()
+for dir in "$PROJECT/$HUB"/*/; do
+  [[ -e "$dir" ]] || continue
+  n="$(basename "$dir")"
+  [[ -d "$SRC/$n" ]] || EXTRA+=("$n")
+done
 
 for dir in "${TARGETS[@]}"; do
   mkdir -p "$dir"
-  for skill in "$SRC"/*/; do
-    name="$(basename "$skill")"
-    # Relative, so moving or renaming the project doesn't break this hop. Only the last
-    # hop — references/development/commands/<name> → the clone — is absolute.
-    # -n so an existing symlink is replaced rather than nested inside itself.
-    ln -sfn "../../$HUB/$name" "$dir/$name"
+  c=0
+  for cmd in "$PROJECT/$HUB"/*/; do
+    [[ -e "$cmd" ]] || continue
+    n="$(basename "$cmd")"
+    # Relative and wholly inside the project, so it survives a rename and resolves on a
+    # teammate's clone. -n so an existing symlink is replaced rather than nested in itself.
+    ln -sfn "../../$HUB/$n" "$dir/$n"
+    c=$((c + 1))
   done
-  echo "  ✓ $n links → ${dir#$PROJECT/}"
+  echo "  ✓ $c links → ${dir#$PROJECT/}"
 done
+
+# --- the decision this script refuses to make for you ------------------------
+if [[ ${#DIFFER[@]} -gt 0 ]]; then
+  echo
+  echo "  ! ${#DIFFER[@]} command(s) differ from the source. Nothing was overwritten."
+  echo "    Either you edited your copy, or the source moved on — only you can tell:"
+  echo
+  for n in "${DIFFER[@]}"; do
+    printf '      %-10s diff -ru %s %s\n' "$n" "$HUB/$n" "${SRC/#$HOME/~}/$n"
+  done
+  echo
+  echo "    Read the diffs, then re-run with --update to take the source version"
+  echo "    (your edits are lost), or keep yours and ignore this."
+fi
+
+if [[ ${#EXTRA[@]} -gt 0 ]]; then
+  echo
+  echo "  · ${EXTRA[*]} — in this project, not in the source. Left alone; they are yours."
+fi
 
 if [[ "$MODE" == init ]]; then
   if [[ -e "$PROJECT/references/SKILL.md" ]] && \
