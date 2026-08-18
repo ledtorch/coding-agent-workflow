@@ -36,9 +36,9 @@ document, and the user decides whether any of it gets built. One exception: a
 A finding that contradicts a reference doc is a finding **about the doc too**. Record both;
 the doc is as likely to be wrong as the code.
 
-> **No `references/SKILL.md`?** The project runs in **general mode** — skip Step 0 and audit
-> against the codebase itself. Don't invent a reference doc, and don't halt over its absence.
-> [`/setup`](../setup/SKILL.md) builds the layer if the accuracy is wanted back.
+> **No `references/SKILL.md`?** The reference layer isn't set up here — skip Step 0 and audit
+> against the codebase itself. **Say so at the top of the run.** Don't invent a reference doc,
+> and don't halt over its absence. [`/setup`](../setup/SKILL.md) builds it, in either mode.
 
 ## Step 1: Read every target completely
 
@@ -325,4 +325,4 @@ that decision is the whole point of the command.
 `trim.md` (single-file, prose-only, zero behavior change) · `conventions.md` (Rules 1–9) ·
 `/security-review` (owns the security verdict)
 
-**Last Updated**: 2026-07-26
+**Last Updated**: 2026-08-18

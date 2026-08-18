@@ -30,9 +30,9 @@ Blocking, in order:
 
 Cite both reads in the Gate 1 checklist as the first row(s). Skipping either is a planning failure — roll back to step 0.
 
-> **No `references/SKILL.md`?** The project runs in **general mode** — skip this step and work
-> from the codebase itself. Don't invent a reference doc, and don't halt over its absence.
-> [`/setup`](../setup/SKILL.md) builds the layer if the accuracy is wanted back.
+> **No `references/SKILL.md`?** The reference layer isn't set up here — skip this step and work
+> from the codebase itself. **Say so at the top of the run.** Don't invent a reference doc,
+> and don't halt over its absence. [`/setup`](../setup/SKILL.md) builds it, in either mode.
 
 ## 1. Interpret
 Extract: real intent · success shape (advice / fix / comparison / plan) · scope · destructive?
@@ -110,4 +110,4 @@ Never dump raw agent reports.
 - Dumping raw sub-agent output instead of synthesizing
 
 
-**Last Updated**: 2026-05-25
+**Last Updated**: 2026-08-18

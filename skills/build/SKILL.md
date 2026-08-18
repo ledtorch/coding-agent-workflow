@@ -69,10 +69,10 @@ the user can interrupt.
 
 Skipping any is a build failure — restart from B.0.
 
-> **No `references/SKILL.md`?** The project runs in **general mode** — item 1 still binds,
-> items 2–4 are skipped, and the conventions come from the surrounding code. Don't invent a
-> reference doc, and don't halt over its absence. [`/setup`](../setup/SKILL.md) builds the
-> layer if the accuracy is wanted back.
+> **No `references/SKILL.md`?** The reference layer isn't set up here — item 1 still binds,
+> items 2–4 are skipped, and the conventions come from the surrounding code. **Say so at the
+> top of the run.** Don't invent a reference doc, and don't halt over its absence.
+> [`/setup`](../setup/SKILL.md) builds it, in either mode.
 
 
 ## The run loop
@@ -161,4 +161,4 @@ snapshots written), so a run that ends here is cleanly resumable by re-invoking.
   Outcome line if the plan is done.
 
 
-**Last Updated**: 2026-07-20
+**Last Updated**: 2026-08-18
