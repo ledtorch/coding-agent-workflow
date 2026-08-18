@@ -1,12 +1,19 @@
 # A shipping workflow for Claude Code and Codex
 
 ```bash
-git clone https://github.com/ledtorch/coding-agent-workflow.git ~/coding-agent-workflow && ~/coding-agent-workflow/install.sh --user
+git clone https://github.com/ledtorch/coding-agent-workflow.git ~/coding-agent-workflow
 ```
 
-Then open your agent in any project and run **`/setup`** — `$setup` in Codex. It reads your
-codebase, asks how you want the workflow to run there, and takes it from there. You can stop
-reading here.
+Then, **from inside the project you want the workflow in** — it installs into the current
+directory, never the machine:
+
+```bash
+~/coding-agent-workflow/install.sh          # adopt — the project already has references/SKILL.md
+~/coding-agent-workflow/install.sh --init   # init  — it doesn't, so write the whole layer
+```
+
+Then open your agent there and run **`/setup`** — `$setup` in Codex. It reads your codebase
+and finishes whichever half the script couldn't. You can stop reading here.
 
 ---
 
@@ -48,59 +55,126 @@ Supporting commands:
 
 | | |
 |---|---|
-| [`/setup`](skills/setup/SKILL.md) | Run once per project. Reads the codebase, then asks whether to build the `references/` layer or run without it. |
+| [`/setup`](skills/setup/SKILL.md) | Run once per project. Reads the codebase, then either wires the commands into your existing router or fills the scaffolded docs. |
 | [`/trim`](skills/trim/SKILL.md) | Reduces a named file to its smallest correct form. Zero information loss, behavior identical. |
 | [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift. |
 | [`/team`](skills/team/SKILL.md) | Runs a request as a small agent DAG with two review gates and a critic that must disagree. |
 | [`/name`](skills/name/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
 
-## What that install actually did
+## Two modes
 
-The line at the top runs once per machine, and the two halves do different jobs — only one
-of which needs an agent.
+The workflow installs into a repo, not into your home directory. There is no global install
+and no per-machine state — a project either carries the workflow or it doesn't, and you can
+see which by looking at it.
 
-`install.sh` is plain bash. It symlinks the skills into `~/.claude/skills` and
-`~/.agents/skills`, and that is the entire reason `/setup` exists: agents discover commands
-by scanning those directories, so before the script runs, `/setup` is invisible no matter
-what you type. Cloning alone is not enough.
+What differs between the two is only **who owns `references/SKILL.md`**, the index the
+commands route through:
 
-`/setup` is the half that needs an agent, because it reads your codebase before asking
-anything. Every project after the first starts here — no shell command, ever again.
+| | **adopt** — `install.sh` | **init** — `install.sh --init` |
+|---|---|---|
+| For | a project that already has its own `references/SKILL.md` | a project with no doc layer yet |
+| Writes docs | **none** — the commands and nothing else; yours stay yours | TODO stubs for the three contract paths, plus `features/example.md` |
+| `/setup` then | reads your router and proposes the edit that wires in the commands and the three contract paths | reads your code and fills the scaffolded docs, for you to correct |
+| Failure mode | your router doesn't route to what the commands read | a scaffold of plausible guesses nobody corrected |
 
-<details>
-<summary>Installing into one project instead</summary>
+Adopt is the one that matters for adoption: a project with real docs already has an index,
+and overwriting it to install a workflow would be the rudest possible thing to do. `/setup`
+proposes the edit and you approve it — and if you or your agent would rather write it
+differently, that's fine, as long as it satisfies the contract below.
 
-```bash
-./install.sh /path/to/your-project        # both agents
-./install.sh /path/to/your-project claude # or: codex
+**`/setup` is not a gate.** Skip it and the commands still run; they just work from the code
+alone and say so at the top of each run, because a command that silently invents a
+convention is worse than one that admits it has none. It is still the single highest-value
+thing you can do per project, and every command will remind you until it exists.
+
+### The contract
+
+Three paths are hardcoded in the commands' required reading. Whatever your router says about
+them, they have to resolve:
+
+| Path | Read by |
+|---|---|
+| `references/SKILL.md` | `/build` `/inspect` `/plan` `/setup` `/team` |
+| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/name` `/plan` `/team` `/trim` |
+| `references/development/architecture.md` | `/build` `/handoff` `/plan` |
+
+Prose is yours. Paths are not. A command whose Step 0 can't find its doc doesn't degrade
+quietly — it stops and says so, which is the intended behavior and the reason these three
+are worth pinning.
+
+### The layout
+
+```
+references/
+├── SKILL.md                     the index — what to read, and when
+├── development/
+│   ├── commands/                the ten commands — the only truth in this tree
+│   │   ├── plan/SKILL.md
+│   │   ├── build/SKILL.md
+│   │   └── …
+│   ├── architecture.md          stack, layer map, load-bearing boundaries
+│   └── conventions.md           how code is written here, numbered
+└── features/
+    ├── example.md               the template — stays, gets followed
+    ├── auth.md                  one contract per feature, written by you
+    └── …
+
+.claude/skills/<name>   →   ../../references/development/commands/<name>
+.agents/skills/<name>   →   ../../references/development/commands/<name>
 ```
 
-Links into `<project>/.claude/skills` and `<project>/.agents/skills` — worth it when you
-want the workflow scoped to one repo, or committed alongside it. Add those two paths to the
-project's `.gitignore` unless you mean to share them: the symlinks store absolute paths, so
-they resolve to nothing on a teammate's machine.
+Adopt creates only `development/commands/` and the two symlink directories — the docs are
+already yours. Init adds the four files above as TODO stubs, each carrying a marker `/setup`
+looks for, so a stub is never mistaken for something someone wrote. **Neither mode ever
+overwrites an existing file.**
 
-</details>
+### `references/development/commands/` is the source of truth
 
-Skills are symlinked rather than copied, so `git pull` in the clone updates every install at
-once. Keep the clone somewhere permanent — moving or deleting it breaks every install, and
+Agents discover commands by scanning `.claude/skills` and `.agents/skills` and nothing else.
+Those two directories are **pointers**, not homes — every entry hops through
+`references/development/commands/`, which is where the commands actually live for this
+project. One place to read them, one place to point at in review, one place a teammate finds
+without being told where to look.
+
+The hops into `references/` are relative, so renaming or moving the project doesn't break
+them. Only the last hop — `references/development/commands/<name>` into the clone — is
+absolute.
+
+Skills are symlinked rather than copied, so `git pull` in the clone updates every project at
+once. Keep the clone somewhere permanent: moving or deleting it breaks every install, and
 does it silently.
 
-What it links, if you'd rather do it by hand:
+Commit `references/` — the docs are yours. Do not commit the symlinks; they store absolute
+paths and resolve to nothing on a teammate's machine, who runs `install.sh` themselves:
 
-| Agent | `--user` | One project | Invoked as |
-|---|---|---|---|
-| Claude Code | `~/.claude/skills/<name>` | `<project>/.claude/skills/<name>` | `/plan` |
-| Codex | `~/.agents/skills/<name>` | `<project>/.agents/skills/<name>` | `$plan` |
+```
+references/development/commands/
+.claude/skills/
+.agents/skills/
+```
 
-Codex scans `$CWD/.agents/skills` → `$REPO_ROOT/.agents/skills` → `$HOME/.agents/skills`,
-and follows symlinked folders. It will also pick a skill *implicitly* when your request
-matches its `description` — ask it to "audit this file for dead code" and `$inspect` can
-trigger without being named.
+## The docs are frameworks, not content
 
-> **Not `~/.codex/prompts/`.** Codex custom prompts are deprecated in favour of skills, and
-> they only ever lived in your home directory — they cannot ship inside a repo, which is the
-> whole point of sharing a workflow.
+`install.sh` is plain bash — it can lay out the tree and the symlinks, but it cannot know
+anything about your code. The reference docs are what `/setup` writes, by reading the
+codebase. Nothing is downloaded and nothing is copied from another project.
+
+They are **shapes to fill**, not files to fetch. Every project has a different stack,
+different rules, and different features, so what transfers is the structure and the altitude
+— a conventions file that numbers its rules so an audit can cite them, an architecture file
+that states boundaries rather than restating the directory tree.
+
+| Doc | Owns |
+|---|---|
+| `references/SKILL.md` | The router. What each doc covers, what to read first, the standing rules. |
+| `references/development/architecture.md` | Stack and versions, layer map, where a new file goes, the boundaries that break things when crossed. |
+| `references/development/conventions.md` | Numbered rules for how code is written here, each one shown by a file that already does it. |
+| `references/features/example.md` | The template for a feature doc — contracts and invariants, not a description of the code. `/setup` writes it against your stack; every feature doc you add next to it follows it. |
+
+The commands read these before doing anything. That layer is the difference between an agent
+that checks a claim against something and one that checks it against its own memory — and it
+is the part only your codebase can supply, which is why `/setup` exists and why it runs once
+per project.
 
 ## What actually makes them work
 
@@ -124,33 +198,11 @@ grep — including lazy imports, re-exports, and importers that never call. The 
 this prevents is real: a substring match on `_title` happily matches `tile__title`.
 
 **Docs are load-bearing.** A change that makes a reference doc wrong is not done until the
-doc is updated in the same pass. Several commands read a `references/` directory first and
-fail loudly if it was skipped.
+doc is updated in the same pass. Every command reads `references/` first and fails loudly if
+it was skipped.
 
 **State belongs in a file, not a chat.** Plan documents are the unit of work; `/handoff`
 exists because context decays and the next session starts from zero.
-
-## The two ways to run
-
-Most commands route through a `references/` directory holding the project's own docs — an
-index, a conventions file, an architecture file. That layer is the difference between an
-agent that checks a claim against something and one that checks it against its own memory.
-It is also the part only you can supply, which is what `/setup` exists to resolve:
-
-| | **Grounded** | **General** |
-|---|---|---|
-| `references/` | built from your real codebase | absent |
-| Commands read | project docs, then code | code only |
-| `/plan`, `/inspect` cite | `file:line` **and** a doc | `file:line` only |
-| Cost to set up | one session, with your review | nothing |
-| Failure mode | a stale doc asserts something false | the agent re-derives, sometimes wrong |
-
-General mode is a real choice, not a degraded one — the absence of `references/SKILL.md` is
-itself the switch, and every command drops into it without complaint. Run `/setup` again to
-switch over whenever the project grows into wanting the docs.
-
-Grounded mode is worth it once more than one person touches the code, or once "how do we do
-X here" has an answer that isn't obvious from any single file.
 
 ## Adapting them
 
@@ -167,6 +219,15 @@ than pre-injecting them, because that is what makes one file work in both agents
 Claude Code only and prefer the output pre-loaded, add
 `` - Branch: !`git branch --show-current` `` back to the top of that skill — Claude expands
 it, Codex prints it literally.
+
+Codex scans `$CWD/.agents/skills` → `$REPO_ROOT/.agents/skills` → `$HOME/.agents/skills`,
+and follows symlinked folders. It will also pick a skill *implicitly* when your request
+matches its `description` — ask it to "audit this file for dead code" and `$inspect` can
+trigger without being named.
+
+> **Not `~/.codex/prompts/`.** Codex custom prompts are deprecated in favour of skills, and
+> they only ever lived in your home directory — they cannot ship inside a repo, which is the
+> whole point of installing per project.
 
 ## License
 
