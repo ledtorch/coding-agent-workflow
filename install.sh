@@ -279,12 +279,12 @@ Then the rest:
 Codex also picks a command implicitly when your request matches its description —
 say "audit this file for dead code" and $inspect can trigger on its own.
 
-The docs under references/ are yours — commit them. The symlinks are not: they
-store absolute paths and resolve to nothing on a teammate's machine. Add
+Everything installed belongs to the project — commit all of it:
 
-  references/development/commands/
-  .claude/skills/
-  .agents/skills/
+  references/development/commands/   the commands, real files, yours to edit
+  .claude/skills/                    relative symlinks into commands/
+  .agents/skills/                    relative symlinks into commands/
 
-to this project's .gitignore, and have teammates run install.sh themselves.
+Both symlink hops stay inside the project, so a teammate who clones the repo
+has the commands without running this script.
 EOF
