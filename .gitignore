@@ -1,1 +1,6 @@
 .DS_Store
+
+# Local skill symlinks for working on this clone — dogfood pointers into
+# skills/, not part of what the repo ships. Consumer projects DO commit theirs.
+.claude/
+.agents/
