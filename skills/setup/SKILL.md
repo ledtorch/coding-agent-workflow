@@ -6,7 +6,7 @@ description: Prepare a project to run this workflow — either wire the commands
 
 # Setup
 
-Make a project ready for the other nine commands. **Writes only inside `references/`**, plus
+Make a project ready for the other commands. **Writes only inside `references/`**, plus
 one proposed edit to a `references/SKILL.md` the project already owns. Never touches source,
 config, or history.
 

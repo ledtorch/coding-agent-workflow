@@ -21,8 +21,8 @@ and finishes whichever half the script couldn't. You can stop reading here.
 
 ---
 
-Ten commands that turn an agent from something you chat with into something you can run a
-release through. They are not prompt templates — each one is a contract about where judgment
+Eleven commands that turn an agent from something you chat with into something you can run
+a release through. They are not prompt templates — each one is a contract about where judgment
 sits, what counts as verified, and what the agent is not allowed to do on its own.
 
 Extracted from a real project, so the examples are concrete rather than generic.
@@ -64,6 +64,7 @@ Supporting commands:
 | [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift. |
 | [`/team`](skills/team/SKILL.md) | Runs a request as a small agent DAG with two review gates and a critic that must disagree. |
 | [`/name`](skills/name/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
+| [`/aeo`](skills/aeo/SKILL.md) | Audits a website for answer/agent-engine optimization — crawler access, raw-HTML visibility, citability — with evidence-tiered findings and a plan. Fixes nothing. |
 
 ## Two modes
 
@@ -112,7 +113,7 @@ are worth pinning.
 references/
 ├── SKILL.md                     the index — what to read, and when
 ├── development/
-│   ├── commands/                the ten commands, copied — yours to edit
+│   ├── commands/                the eleven commands, copied — yours to edit
 │   │   ├── plan/SKILL.md
 │   │   ├── build/SKILL.md
 │   │   └── …
