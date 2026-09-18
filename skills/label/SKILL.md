@@ -1,5 +1,5 @@
 ---
-name: name
+name: label
 description: Rename the layer names of a selected Figma frame and its children to clear, role-based names matching the design-system convention — names only
 ---
 
@@ -18,7 +18,7 @@ Rename **only the layer names** of one Figma frame and all of its renameable des
 
 ## Input
 
-The input — `/name <url>` (Claude Code) or `$name <url>` (Codex) — is a Figma node URL: `https://figma.com/design/:fileKey/:fileName?node-id=:int1-:int2`. Extract `fileKey` and `nodeId` (convert `13126-26561` → `13126:26561`).
+The input — `/label <url>` (Claude Code) or `$label <url>` (Codex) — is a Figma node URL: `https://figma.com/design/:fileKey/:fileName?node-id=:int1-:int2`. Extract `fileKey` and `nodeId` (convert `13126-26561` → `13126:26561`).
 
 If no URL is given, operate on the **current selection** (`get_selection`). If neither resolves, ask for a node-specific URL.
 

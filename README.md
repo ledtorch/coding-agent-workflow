@@ -63,7 +63,7 @@ Supporting commands:
 | [`/trim`](skills/trim/SKILL.md) | Reduces a named file to its smallest correct form. Zero information loss, behavior identical. |
 | [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift. |
 | [`/team`](skills/team/SKILL.md) | Runs a request as a small agent DAG with two review gates and a critic that must disagree. |
-| [`/name`](skills/name/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
+| [`/label`](skills/label/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
 | [`/aeo`](skills/aeo/SKILL.md) | Audits a website for answer/agent-engine optimization — crawler access, raw-HTML visibility, citability — with evidence-tiered findings and a plan. Fixes nothing. |
 
 ## Two modes
@@ -100,7 +100,7 @@ them, they have to resolve:
 | Path | Read by |
 |---|---|
 | `references/SKILL.md` | `/build` `/inspect` `/plan` `/setup` `/team` |
-| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/name` `/plan` `/team` `/trim` |
+| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
 | `references/development/architecture.md` | `/build` `/handoff` `/plan` |
 
 Prose is yours. Paths are not. A command whose Step 0 can't find its doc doesn't degrade

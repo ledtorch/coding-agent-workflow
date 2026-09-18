@@ -37,7 +37,7 @@ have to exist:
 | Path | Read by |
 |---|---|
 | `references/SKILL.md` | `/build` `/inspect` `/plan` `/team` |
-| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/name` `/plan` `/team` `/trim` |
+| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
 | `references/development/architecture.md` | `/build` `/handoff` `/plan` |
 
 Prose is the project's. Paths are not. This is the one thing setup must leave true.
