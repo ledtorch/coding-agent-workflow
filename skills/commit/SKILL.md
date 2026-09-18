@@ -22,7 +22,7 @@ git log --oneline -10         # match the existing message style
 
 [optional body]
 
-<Assisted by <model version>>
+Assisted by: <model name>
 ```
 
 ### Types
@@ -84,4 +84,4 @@ git log --oneline -10         # match the existing message style
 - If the user provided arguments (e.g., `/commit fix the search bug`), use that as context for the message but still verify the diff matches.
 
 
-**Last Updated**: 2026-05-25
+**Last Updated**: 2026-09-18
