@@ -20,11 +20,11 @@ a plan for actual work (`/plan`).
 
 The user picked when they ran the installer. **Detect it — never re-ask.**
 
-| | **adopt** — `install.sh` | **init** — `install.sh --init` |
-|---|---|---|
-| The project | already has its own `references/SKILL.md` | has no doc layer yet |
-| Your job | wire the commands into the docs that exist | write the layer from the real codebase |
-| `SKILL.md` | **theirs.** You propose an edit; they approve it | yours to write |
+|              | **adopt** — `install.sh`                             | **init** — `install.sh --init`                   |
+| ------------ | ---------------------------------------------------- | ------------------------------------------------ |
+| The project  | already has its own `references/SKILL.md`            | has no doc layer yet                             |
+| Your job     | wire the commands into the docs that exist           | write the layer from the real codebase           |
+| `SKILL.md`   | **theirs.** You propose an edit; they approve it     | yours to write                                   |
 | Failure mode | their router doesn't route to what the commands read | a scaffold of plausible guesses nobody corrected |
 
 Both end in the same place: the three contract paths resolve, and the index routes to them.
@@ -34,11 +34,11 @@ Both end in the same place: the three contract paths resolve, and the index rout
 Hardcoded in the other commands' blocking Step 0. Whatever the index says about them, they
 have to exist:
 
-| Path | Read by |
-|---|---|
-| `references/SKILL.md` | `/build` `/inspect` `/plan` `/team` |
-| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
-| `references/development/architecture.md` | `/build` `/handoff` `/plan` |
+| Path                                     | Read by                                                         |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `references/SKILL.md`                    | `/build` `/inspect` `/plan` `/team`                             |
+| `references/development/conventions.md`  | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
+| `references/development/architecture.md` | `/build` `/handoff` `/plan`                                     |
 
 Prose is the project's. Paths are not. This is the one thing setup must leave true.
 
@@ -63,10 +63,10 @@ Then identify the stack from what is actually present — `package.json`, `pypro
 
 ## Step 1: Say which mode you detected, in one line
 
-| What Step 0 found | Mode |
-|---|---|
-| `references/SKILL.md` with real routing content | **adopt** → Step 2A |
-| Absent, or carrying the `Stub from install.sh` marker | **init** → Step 2B |
+| What Step 0 found                                     | Mode                |
+| ----------------------------------------------------- | ------------------- |
+| `references/SKILL.md` with real routing content       | **adopt** → Step 2A |
+| Absent, or carrying the `Stub from install.sh` marker | **init** → Step 2B  |
 
 State it so the user can interrupt before any file moves:
 
@@ -102,12 +102,12 @@ whether it already sits at the contract path.
 
 Three moves, in preference order. **Ask; don't pick for them.**
 
-| Situation | Move |
-|---|---|
-| Their doc is already at the contract path | Nothing to do |
-| Their doc exists elsewhere | **Point** — write a short doc at the contract path whose entire body routes to the real one. No copying, so nothing can drift. Reversible in one delete. |
-| Their doc exists elsewhere and is the obvious single home | **Move** — `git mv` to the contract path, then sweep every inbound link to zero hits. Cleaner, but touches their tree. |
-| No equivalent exists | **Write** it, exactly as Step 2B does |
+| Situation                                                 | Move                                                                                                                                                     |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Their doc is already at the contract path                 | Nothing to do                                                                                                                                            |
+| Their doc exists elsewhere                                | **Point** — write a short doc at the contract path whose entire body routes to the real one. No copying, so nothing can drift. Reversible in one delete. |
+| Their doc exists elsewhere and is the obvious single home | **Move** — `git mv` to the contract path, then sweep every inbound link to zero hits. Cleaner, but touches their tree.                                   |
+| No equivalent exists                                      | **Write** it, exactly as Step 2B does                                                                                                                    |
 
 Never copy content into the contract path. A copied rule is a second source of truth, and it
 will drift in the direction of whichever file someone edits next.
@@ -256,4 +256,4 @@ Step 2A, and never source, config, `.gitignore`, or CI.
 - [ ] The user has seen every file written or edited, and corrected it
 - [ ] Nothing written outside `references/`
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19

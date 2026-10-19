@@ -105,18 +105,18 @@ Nothing above that: no `# vX` heading, no date line, no restatement of the title
 
 **Section emoji — one glyph per theme, fixed across releases**
 
-| Emoji | Theme | Covers |
-|---|---|---|
-| 📄 | **Case studies** | the content collection, project pages, case-study copy |
-| 🏠 | **Home & nav** | the project grid, tiles, the catalogue, contact |
-| 🎨 | **Design system** | tokens, typography, shared components, layout primitives |
-| 🎬 | **Motion** | scroll reveals, transitions, video tiles |
-| ⚡ | **Performance** | images, fonts, video encoding, build output size |
-| ♿ | **Accessibility** | alt text, heading order, focus, reduced motion |
-| 🔎 | **Discoverability** | metadata, OG cards, canonicals, sitemap, robots |
-| 🔧 | **Infrastructure** | deploy, nginx, TLS, DNS, the scripts |
-| 📚 | **Docs & commands** | `references/`, the slash commands |
-| 🐛 | **Fixes** | bugs with no home above — use sparingly, prefer the owning theme |
+| Emoji | Theme               | Covers                                                           |
+| ----- | ------------------- | ---------------------------------------------------------------- |
+| 📄    | **Case studies**    | the content collection, project pages, case-study copy           |
+| 🏠    | **Home & nav**      | the project grid, tiles, the catalogue, contact                  |
+| 🎨    | **Design system**   | tokens, typography, shared components, layout primitives         |
+| 🎬    | **Motion**          | scroll reveals, transitions, video tiles                         |
+| ⚡    | **Performance**     | images, fonts, video encoding, build output size                 |
+| ♿    | **Accessibility**   | alt text, heading order, focus, reduced motion                   |
+| 🔎    | **Discoverability** | metadata, OG cards, canonicals, sitemap, robots                  |
+| 🔧    | **Infrastructure**  | deploy, nginx, TLS, DNS, the scripts                             |
+| 📚    | **Docs & commands** | `references/`, the slash commands                                |
+| 🐛    | **Fixes**           | bugs with no home above — use sparingly, prefer the owning theme |
 
 Rules: **pick from this table, never invent a glyph.** A release uses only the themes its
 log actually contains — an empty theme is omitted, never included with filler. A fix

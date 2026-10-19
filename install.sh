@@ -91,9 +91,9 @@ scaffold() {
 
 ## Routing
 
-| When the work touches | Read |
-|---|---|
-| Anything that writes code | `development/conventions.md` |
+| When the work touches             | Read                          |
+|-----------------------------------|-------------------------------|
+| Anything that writes code         | `development/conventions.md`  |
 | Structure, stack, where code goes | `development/architecture.md` |
 
 TODO — one row per feature area that actually exists in this repo. A row pointing at a doc

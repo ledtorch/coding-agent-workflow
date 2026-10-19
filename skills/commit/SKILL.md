@@ -27,16 +27,16 @@ Assisted by: <model name>
 
 ### Types
 
-| Type     | When to use                                     |
-|----------|-------------------------------------------------|
-| `feat`   | New user-facing feature or capability           |
-| `fix`    | Bug fix or correcting broken behavior           |
-| `ui`     | Visual/layout changes                           |
-| `refact` | Code restructure without changing behavior      |
-| `docs`   | Documentation, references, specs, product plans |
-| `content`| Case-study copy or assets — `src/content/`, images, video |
-| `perf`   | Performance improvement                         |
-| `chore`  | Maintenance — deps, config, cleanup             |
+| Type      | When to use                                               |
+| --------- | --------------------------------------------------------- |
+| `feat`    | New user-facing feature or capability                     |
+| `fix`     | Bug fix or correcting broken behavior                     |
+| `ui`      | Visual/layout changes                                     |
+| `refact`  | Code restructure without changing behavior                |
+| `docs`    | Documentation, references, specs, product plans           |
+| `content` | Case-study copy or assets — `src/content/`, images, video |
+| `perf`    | Performance improvement                                   |
+| `chore`   | Maintenance — deps, config, cleanup                       |
 
 ### Rules
 
@@ -84,4 +84,4 @@ Assisted by: <model name>
 - If the user provided arguments (e.g., `/commit fix the search bug`), use that as context for the message but still verify the diff matches.
 
 
-**Last Updated**: 2026-09-18
+**Last Updated**: 2026-10-19

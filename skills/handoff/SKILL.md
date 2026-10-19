@@ -81,12 +81,12 @@ A short list of `references/*.md` files the next agent should read BEFORE touchi
 
 **Conditionally include** — scan only the area(s) the session actually touched, then attach the matching docs:
 
-| Session touched… | Attach |
-|---|---|
+| Session touched…                           | Attach                                                      |
+| ------------------------------------------ | ----------------------------------------------------------- |
 | Components, layouts, styling, build config | `references/development/conventions.md` · `architecture.md` |
-| The content collection or a case study | `architecture.md` § Content collection |
-| Motion, reveals, transitions | `references/development/animation.md` |
-| Deploy, the server, DNS, TLS | `references/ops/deploy.md` |
+| The content collection or a case study     | `architecture.md` § Content collection                      |
+| Motion, reveals, transitions               | `references/development/animation.md`                       |
+| Deploy, the server, DNS, TLS               | `references/ops/deploy.md`                                  |
 
 Skip what the session didn't touch. Attach only the docs whose topic it actually touched — not the whole folder. If a touched area has no doc, flag it inline: *"⚠️ No reference doc exists for `<area>` yet — flag to user."*
 
@@ -119,11 +119,11 @@ If the session was small (one bug fix, a CSS tune), say so honestly in 1-2 bulle
 
 A handoff drifts when it re-emits tasks the session already resolved. Before writing anything, pull the inherited task list — the previous handoff's §3 (if it was pasted into this session) — and classify each one against what THIS session actually did:
 
-| Prior task became… | Action |
-|---|---|
-| **Finished** this session | Drop from §3 → record in §2 ("shipped X") |
+| Prior task became…                         | Action                                                                              |
+| ------------------------------------------ | ----------------------------------------------------------------------------------- |
+| **Finished** this session                  | Drop from §3 → record in §2 ("shipped X")                                           |
 | **Dropped / superseded / decided-against** | Drop from §3 → if the call matters, note it in §2 ("chose B over A; A not pursued") |
-| **Still open** | Carry forward — refresh its estimate + start-anchor |
+| **Still open**                             | Carry forward — refresh its estimate + start-anchor                                 |
 
 A task the session **finished or abandoned must never reappear in §3.** Only after reconciling do you add newly-discovered items (sources below). If a `/handoff` argument file carries dropped/done items as live tasks, they are stale by definition — reconcile, don't recopy.
 
@@ -175,4 +175,4 @@ If the next task depends on a user decision, phrase as a decision item, not a bu
 - If the session had a meaningful failure or pivot (e.g. "tried approach A, abandoned for approach B because Y"), include it — the next agent saves time knowing why a path was rejected.
 
 
-**Last Updated**: 2026-07-26
+**Last Updated**: 2026-10-19

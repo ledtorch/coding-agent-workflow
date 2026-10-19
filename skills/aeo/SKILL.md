@@ -50,11 +50,11 @@ Every check below carries a tier, and the tier caps the severity a finding may c
 The AEO industry's failure mode is selling speculative factors as critical ones; this
 audit's job is to not do that.
 
-| Tier | Meaning | Severity ceiling |
-|---|---|---|
-| **PROVEN** | Controlled study or first-party platform statement | Critical |
-| **PLAUSIBLE** | Strong mechanism + practitioner consensus, no controlled proof | Required |
-| **SPECULATIVE** | Widely recommended; evidence weak or contradicted | Consider |
+| Tier            | Meaning                                                        | Severity ceiling |
+| --------------- | -------------------------------------------------------------- | ---------------- |
+| **PROVEN**      | Controlled study or first-party platform statement             | Critical         |
+| **PLAUSIBLE**   | Strong mechanism + practitioner consensus, no controlled proof | Required         |
+| **SPECULATIVE** | Widely recommended; evidence weak or contradicted              | Consider         |
 
 ## Step 1: Establish ground truth
 
@@ -83,11 +83,11 @@ crawler classes exist per operator, and **blocking one class does not block the 
 the classic finding is a `GPTBot` block added years ago for training reasons that also
 never allowed `OAI-SearchBot`, silently removing the site from ChatGPT Search.
 
-| Class | Examples | Blocking means |
-|---|---|---|
-| Training | `GPTBot` `ClaudeBot` `Google-Extended` `CCBot` `Meta-ExternalAgent` `Applebot-Extended` | Out of future training corpora — a policy choice, not an AEO defect |
-| Search index | `OAI-SearchBot` `Claude-SearchBot` `PerplexityBot` | **Removed from that engine's answers and citations** |
-| User-triggered fetch | `ChatGPT-User` `Claude-User` `Perplexity-User` | The assistant can't open the site's URLs live for a user |
+| Class                | Examples                                                                                | Blocking means                                                      |
+| -------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Training             | `GPTBot` `ClaudeBot` `Google-Extended` `CCBot` `Meta-ExternalAgent` `Applebot-Extended` | Out of future training corpora — a policy choice, not an AEO defect |
+| Search index         | `OAI-SearchBot` `Claude-SearchBot` `PerplexityBot`                                      | **Removed from that engine's answers and citations**                |
+| User-triggered fetch | `ChatGPT-User` `Claude-User` `Perplexity-User`                                          | The assistant can't open the site's URLs live for a user            |
 
 Note: `Google-Extended` gates Gemini training only — AI Overviews and AI Mode use plain
 Googlebot and are unaffected by it.
@@ -190,13 +190,13 @@ richer" is not a finding.
 
 ## Step 4: Severity
 
-| Label | Meaning here |
-|---|---|
-| **Critical** | Engines cannot reach or cannot read the site today (C1/C2 failures) |
-| **Required** | Content reachable but structurally uncitable; fix before investing in content |
+| Label        | Meaning here                                                                   |
+| ------------ | ------------------------------------------------------------------------------ |
+| **Critical** | Engines cannot reach or cannot read the site today (C1/C2 failures)            |
+| **Required** | Content reachable but structurally uncitable; fix before investing in content  |
 | **Consider** | Proven-lever opportunities (C4, C5) and infrastructure gaps — the user decides |
-| **Nit** | Hygiene that costs little and buys little |
-| **FYI** | Policy choices (e.g. training-bot blocks) recorded, not judged |
+| **Nit**      | Hygiene that costs little and buys little                                      |
+| **FYI**      | Policy choices (e.g. training-bot blocks) recorded, not judged                 |
 
 **Lead with what matters.** A C1 or C2 failure *is* the report — ten content findings on
 an unreachable site are noise.
@@ -232,14 +232,14 @@ the audit's to make.
 
 ## Common rationalizations
 
-| Rationalization | Reality |
-|---|---|
-| "Add llms.txt and AI will cite us" | ~0.1% of AI-bot traffic touches it; no engine commits to it for search. Ceiling: Consider. |
-| "We have schema, so we're covered" | The one natural experiment found no citation lift. Schema is entity infrastructure, not a lever — and it can't rescue content that fails C2 or C3. |
-| "Google renders our JS, so AI can read it" | Only Gemini renders JS. GPTBot, ClaudeBot, and PerplexityBot read the initial HTML and nothing else. |
-| "We only blocked training bots" | Search-index and user-fetch bots are separate UAs per operator. Verify each class; the block you remember is rarely the block you have. |
-| "robots.txt allows it, so we're reachable" | WAF and CDN bot rules 403 crawlers robots.txt invites. Only a live fetch with a crawler UA proves reachability. |
-| "Our SEO work carries over" | The GEO paper measured keyword optimization flat-to-negative for generative engines, while citations, quotes, and statistics gained 30–40%. Different game, different levers. |
+| Rationalization                            | Reality                                                                                                                                                                       |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Add llms.txt and AI will cite us"         | ~0.1% of AI-bot traffic touches it; no engine commits to it for search. Ceiling: Consider.                                                                                    |
+| "We have schema, so we're covered"         | The one natural experiment found no citation lift. Schema is entity infrastructure, not a lever — and it can't rescue content that fails C2 or C3.                            |
+| "Google renders our JS, so AI can read it" | Only Gemini renders JS. GPTBot, ClaudeBot, and PerplexityBot read the initial HTML and nothing else.                                                                          |
+| "We only blocked training bots"            | Search-index and user-fetch bots are separate UAs per operator. Verify each class; the block you remember is rarely the block you have.                                       |
+| "robots.txt allows it, so we're reachable" | WAF and CDN bot rules 403 crawlers robots.txt invites. Only a live fetch with a crawler UA proves reachability.                                                               |
+| "Our SEO work carries over"                | The GEO paper measured keyword optimization flat-to-negative for generative engines, while citations, quotes, and statistics gained 30–40%. Different game, different levers. |
 
 ## Verification
 
@@ -261,4 +261,4 @@ the audit's to make.
 (same contract, aimed at code) · Princeton GEO paper (arXiv 2311.09735) · llmstxt.org ·
 Vercel "The rise of the AI crawler"
 
-**Last Updated**: 2026-08-21
+**Last Updated**: 2026-10-19

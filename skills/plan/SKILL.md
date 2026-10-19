@@ -133,13 +133,13 @@ All six must hold; fail any one → break it down further:
 5. **One working state** — ends with the system building and behaving; one commit's worth
 6. **No "and" in the title** — that's two tasks
 
-| Size | Files | Scope | Example |
-|------|-------|-------|---------|
-| **XS** | 1 | Single function or config change | Add a validation rule |
-| **S** | 1-2 | One component or endpoint | Add a new API endpoint |
-| **M** | 3-5 | One feature slice | User registration flow |
-| **L** | 5-8 | Multi-component feature | Search with filtering and pagination |
-| **XL** | 8+ | **Too large — break it down further** | — |
+| Size   | Files | Scope                                 | Example                              |
+| ------ | ----- | ------------------------------------- | ------------------------------------ |
+| **XS** | 1     | Single function or config change      | Add a validation rule                |
+| **S**  | 1-2   | One component or endpoint             | Add a new API endpoint               |
+| **M**  | 3-5   | One feature slice                     | User registration flow               |
+| **L**  | 5-8   | Multi-component feature               | Search with filtering and pagination |
+| **XL** | 8+    | **Too large — break it down further** | —                                    |
 
 Agents perform best on S and M. L must be justified; XL is never a task, only a phase.
 

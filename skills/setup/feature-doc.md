@@ -16,11 +16,11 @@ would otherwise have to read three files to answer "what is supposed to happen h
 a file that goes stale the first time someone refactors and helps nobody in between. Write
 what must hold — the invariants, the boundaries, the decisions and why they went that way.
 
-| Write this | Not this |
-|---|---|
-| "Both paths return the same `AuthResponse`." | "The login function calls the API and sets the token." |
-| "Dismissal requires `animationDone && webViewReady`, unless the 6-second cap forces both." | "There is a timer that dismisses the overlay." |
-| "Never add a handwritten 401 after soft resolution — soft swallows errors and can misclassify an outage as anonymous." | "Use `resolve_viewer` for auth." |
+| Write this                                                                                                             | Not this                                               |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| "Both paths return the same `AuthResponse`."                                                                           | "The login function calls the API and sets the token." |
+| "Dismissal requires `animationDone && webViewReady`, unless the 6-second cap forces both."                             | "There is a timer that dismisses the overlay."         |
+| "Never add a handwritten 401 after soft resolution — soft swallows errors and can misclassify an outage as anonymous." | "Use `resolve_viewer` for auth."                       |
 
 The test: **would this line still be true after a refactor that changed every function name?**
 If yes, it belongs. If no, it belongs in the code.
@@ -104,13 +104,13 @@ truth.** Without that line, a 🔵 section reads as a bug report.
 
 A feature doc that doesn't connect is a file nobody finds.
 
-| Wire | How |
-|---|---|
-| **Into `references/SKILL.md`** | Add one line under Features, grouped with its neighbours. A doc missing from the router is invisible to every command. |
-| **To `architecture.md`** | Link the section that owns the boundary you depend on (`architecture.md §6.1`). If your feature *creates* a load-bearing boundary, add it there — don't describe it only here. |
-| **To `conventions.md`** | Cite rules by number when behavior depends on one. If the feature needs a rule that doesn't exist, that's a conventions change, not a paragraph here. |
-| **To siblings** | Where two docs touch, each names the other and says which owns what. Two docs claiming one concern is the drift `/inspect` exists to catch. |
-| **To code** | `file:line` for canonical instances and known violations alike. A named path is checkable; "the auth service" is not. |
+| Wire                           | How                                                                                                                                                                            |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Into `references/SKILL.md`** | Add one line under Features, grouped with its neighbours. A doc missing from the router is invisible to every command.                                                         |
+| **To `architecture.md`**       | Link the section that owns the boundary you depend on (`architecture.md §6.1`). If your feature *creates* a load-bearing boundary, add it there — don't describe it only here. |
+| **To `conventions.md`**        | Cite rules by number when behavior depends on one. If the feature needs a rule that doesn't exist, that's a conventions change, not a paragraph here.                          |
+| **To siblings**                | Where two docs touch, each names the other and says which owns what. Two docs claiming one concern is the drift `/inspect` exists to catch.                                    |
+| **To code**                    | `file:line` for canonical instances and known violations alike. A named path is checkable; "the auth service" is not.                                                          |
 
 ## Rules
 
@@ -140,4 +140,4 @@ A feature doc that doesn't connect is a file nobody finds.
 
 ---
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19

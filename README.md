@@ -47,24 +47,24 @@ The audit loops back. `/inspect` doesn't fix what it finds — it ends in a plan
 that plan goes through `/build` like any other. An audit that edits code on the way past is
 just another unreviewed generation.
 
-| | |
-|---|---|
-| [`/plan`](skills/plan/SKILL.md) | Cuts work into ordered, contract-bearing tasks. Writes no code. |
-| [`/build`](skills/build/SKILL.md) | Executes an approved plan, one verified task at a time. May only stop and ask. Never commits. |
+|                                       |                                                                                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`/plan`](skills/plan/SKILL.md)       | Cuts work into ordered, contract-bearing tasks. Writes no code.                                                                                        |
+| [`/build`](skills/build/SKILL.md)     | Executes an approved plan, one verified task at a time. May only stop and ask. Never commits.                                                          |
 | [`/inspect`](skills/inspect/SKILL.md) | Audits what exists — duplication, dead code, wrong-sized abstractions, logic bugs — and ends in severity-labelled findings plus a plan. Fixes nothing. |
-| [`/commit`](skills/commit/SKILL.md) | Proposes grouped commits by topic, waits for a yes. |
-| [`/release`](skills/release/SKILL.md) | Clean tree → push → tag → release notes → deploy. Stops and reports on any blocker. |
+| [`/commit`](skills/commit/SKILL.md)   | Proposes grouped commits by topic, waits for a yes.                                                                                                    |
+| [`/release`](skills/release/SKILL.md) | Clean tree → push → tag → release notes → deploy. Stops and reports on any blocker.                                                                    |
 
 Supporting commands:
 
-| | |
-|---|---|
-| [`/setup`](skills/setup/SKILL.md) | Run once per project. Reads the codebase, then either wires the commands into your existing router or fills the scaffolded docs. |
-| [`/trim`](skills/trim/SKILL.md) | Reduces a named file to its smallest correct form. Zero information loss, behavior identical. |
-| [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift. |
-| [`/team`](skills/team/SKILL.md) | Runs a request as a small agent DAG with two review gates and a critic that must disagree. |
-| [`/label`](skills/label/SKILL.md) | Renames Figma layers to a design-system convention. Names only. |
-| [`/aeo`](skills/aeo/SKILL.md) | Audits a website for answer/agent-engine optimization — crawler access, raw-HTML visibility, citability — with evidence-tiered findings and a plan. Fixes nothing. |
+|                                       |                                                                                                                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`/setup`](skills/setup/SKILL.md)     | Run once per project. Reads the codebase, then either wires the commands into your existing router or fills the scaffolded docs.                                   |
+| [`/trim`](skills/trim/SKILL.md)       | Reduces a named file to its smallest correct form. Zero information loss, behavior identical.                                                                      |
+| [`/handoff`](skills/handoff/SKILL.md) | Writes a self-contained handoff for the next session, with a tree fingerprint so the next agent can detect drift.                                                  |
+| [`/team`](skills/team/SKILL.md)       | Runs a request as a small agent DAG with two review gates and a critic that must disagree.                                                                         |
+| [`/label`](skills/label/SKILL.md)     | Renames Figma layers to a design-system convention. Names only.                                                                                                    |
+| [`/aeo`](skills/aeo/SKILL.md)         | Audits a website for answer/agent-engine optimization — crawler access, raw-HTML visibility, citability — with evidence-tiered findings and a plan. Fixes nothing. |
 
 ## Two modes
 
@@ -75,12 +75,12 @@ see which by looking at it.
 What differs between the two is only **who owns `references/SKILL.md`**, the index the
 commands route through:
 
-| | **adopt** — `install.sh` | **init** — `install.sh --init` |
-|---|---|---|
-| For | a project that already has its own `references/SKILL.md` | a project with no doc layer yet |
-| Writes docs | **none** — the commands and nothing else; yours stay yours | TODO stubs for the three contract paths, plus `features/example.md` |
-| `/setup` then | reads your router and proposes the edit that wires in the commands and the three contract paths | reads your code and fills the scaffolded docs, for you to correct |
-| Failure mode | your router doesn't route to what the commands read | a scaffold of plausible guesses nobody corrected |
+|               | **adopt** — `install.sh`                                                                        | **init** — `install.sh --init`                                      |
+| ------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| For           | a project that already has its own `references/SKILL.md`                                        | a project with no doc layer yet                                     |
+| Writes docs   | **none** — the commands and nothing else; yours stay yours                                      | TODO stubs for the three contract paths, plus `features/example.md` |
+| `/setup` then | reads your router and proposes the edit that wires in the commands and the three contract paths | reads your code and fills the scaffolded docs, for you to correct   |
+| Failure mode  | your router doesn't route to what the commands read                                             | a scaffold of plausible guesses nobody corrected                    |
 
 Adopt is the one that matters for adoption: a project with real docs already has an index,
 and overwriting it to install a workflow would be the rudest possible thing to do. `/setup`
@@ -97,11 +97,11 @@ thing you can do per project, and every command will remind you until it exists.
 Three paths are hardcoded in the commands' required reading. Whatever your router says about
 them, they have to resolve:
 
-| Path | Read by |
-|---|---|
-| `references/SKILL.md` | `/build` `/inspect` `/plan` `/setup` `/team` |
-| `references/development/conventions.md` | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
-| `references/development/architecture.md` | `/build` `/handoff` `/plan` |
+| Path                                     | Read by                                                         |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `references/SKILL.md`                    | `/build` `/inspect` `/plan` `/setup` `/team`                    |
+| `references/development/conventions.md`  | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
+| `references/development/architecture.md` | `/build` `/handoff` `/plan`                                     |
 
 Prose is yours. Paths are not. A command whose Step 0 can't find its doc doesn't degrade
 quietly — it stops and says so, which is the intended behavior and the reason these three
@@ -175,12 +175,12 @@ different rules, and different features, so what transfers is the structure and 
 — a conventions file that numbers its rules so an audit can cite them, an architecture file
 that states boundaries rather than restating the directory tree.
 
-| Doc | Owns |
-|---|---|
-| `references/SKILL.md` | The router. What each doc covers, what to read first, the standing rules. |
-| `references/development/architecture.md` | Stack and versions, layer map, where a new file goes, the boundaries that break things when crossed. |
-| `references/development/conventions.md` | Numbered rules for how code is written here, each one shown by a file that already does it. |
-| `references/features/example.md` | The template for a feature doc — contracts and invariants, not a description of the code. `/setup` writes it against your stack; every feature doc you add next to it follows it. |
+| Doc                                      | Owns                                                                                                                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `references/SKILL.md`                    | The router. What each doc covers, what to read first, the standing rules.                                                                                                         |
+| `references/development/architecture.md` | Stack and versions, layer map, where a new file goes, the boundaries that break things when crossed.                                                                              |
+| `references/development/conventions.md`  | Numbered rules for how code is written here, each one shown by a file that already does it.                                                                                       |
+| `references/features/example.md`         | The template for a feature doc — contracts and invariants, not a description of the code. `/setup` writes it against your stack; every feature doc you add next to it follows it. |
 
 The commands read these before doing anything. That layer is the difference between an agent
 that checks a claim against something and one that checks it against its own memory — and it

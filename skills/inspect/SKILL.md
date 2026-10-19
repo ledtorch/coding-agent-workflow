@@ -139,14 +139,14 @@ slow."
 Six detections are generic; these are the contracts a component owes by virtue of what it
 is. Check the row that matches each target — a target that skips its row is a finding.
 
-| Target kind | Must hold |
-|---|---|
-| View or route | Route registered and its `name` matches the file · back-stack and origin-return behave (`features/view-return.md`) · deep-link entry works |
-| Store | Registered wherever the project resets user state on sign-out · persisted drafts carry the project's save-guard · storage key follows the project's versioned naming scheme |
-| Composable | Category matches its return shape — data vs behavior (Rule 4) · no side effects on import · singletons marked |
-| Component | State at the narrowest scope (Rule 1) · no direct `fetch` (Rule 3) · overlay prefix matches its surface (Card / Sheet / Modal) |
-| Endpoint | Handler is async · response model declared · 404-not-403 posture where the code shouldn't be confirmed · auth resolved the same way as its siblings |
-| Schema or migration | Every application-enforced rule backed by a constraint, or the asymmetry recorded · pending migrations still pending |
+| Target kind         | Must hold                                                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| View or route       | Route registered and its `name` matches the file · back-stack and origin-return behave (`features/view-return.md`) · deep-link entry works                                  |
+| Store               | Registered wherever the project resets user state on sign-out · persisted drafts carry the project's save-guard · storage key follows the project's versioned naming scheme |
+| Composable          | Category matches its return shape — data vs behavior (Rule 4) · no side effects on import · singletons marked                                                               |
+| Component           | State at the narrowest scope (Rule 1) · no direct `fetch` (Rule 3) · overlay prefix matches its surface (Card / Sheet / Modal)                                              |
+| Endpoint            | Handler is async · response model declared · 404-not-403 posture where the code shouldn't be confirmed · auth resolved the same way as its siblings                         |
+| Schema or migration | Every application-enforced rule backed by a constraint, or the asymmetry recorded · pending migrations still pending                                                        |
 
 Dependencies point inward at every kind (Rule 2). A route importing from a service that
 imports back is a finding regardless of which row applies.
@@ -175,13 +175,13 @@ Three proofs are mandatory, because each has burned this repo:
 Label every finding. Unlabelled findings get treated as uniformly mandatory, which wastes
 the reader's attention on nits.
 
-| Label | Meaning |
-|---|---|
+| Label        | Meaning                                                         |
+| ------------ | --------------------------------------------------------------- |
 | **Critical** | Data loss, security exposure, or broken behavior shipping today |
-| **Required** | Should be fixed before building further on this code |
-| **Consider** | Worth doing; the user decides |
-| **Nit** | Style or preference — safe to ignore |
-| **FYI** | Context for later, no action |
+| **Required** | Should be fixed before building further on this code            |
+| **Consider** | Worth doing; the user decides                                   |
+| **Nit**      | Style or preference — safe to ignore                            |
+| **FYI**      | Context for later, no action                                    |
 
 **Lead with what matters.** One structural problem and ten nits means the structural
 problem *is* the report. A few high-conviction findings beat a long list; padding the count
@@ -294,13 +294,13 @@ that decision is the whole point of the command.
 
 ## Common rationalizations
 
-| Rationalization | Reality |
-|---|---|
-| "The tests pass, so it's fine" | Tests prove the paths they reach. Mutate the code; a suite that stays green was never covering it. |
-| "The refactor makes it cleaner" | Relocating complexity isn't reducing it. If the reader holds the same number of concepts, nothing improved. |
+| Rationalization                           | Reality                                                                                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| "The tests pass, so it's fine"            | Tests prove the paths they reach. Mutate the code; a suite that stays green was never covering it.                                    |
+| "The refactor makes it cleaner"           | Relocating complexity isn't reducing it. If the reader holds the same number of concepts, nothing improved.                           |
 | "It's only a small addition to this file" | Small diffs still bolt branches onto unrelated flows and push files past a healthy size. Judge the resulting structure, not the diff. |
-| "Nothing references it, so it's dead" | Not until the grep covers lazy imports, re-exports, and importers that never call. |
-| "The doc says so" | Docs drift. Re-derive the claim from the code before building a finding on it. |
+| "Nothing references it, so it's dead"     | Not until the grep covers lazy imports, re-exports, and importers that never call.                                                    |
+| "The doc says so"                         | Docs drift. Re-derive the claim from the code before building a finding on it.                                                        |
 
 ## Verification
 
@@ -325,4 +325,4 @@ that decision is the whole point of the command.
 `trim.md` (single-file, prose-only, zero behavior change) · `conventions.md` (Rules 1–9) ·
 `/security-review` (owns the security verdict)
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19

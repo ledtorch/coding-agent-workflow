@@ -112,15 +112,15 @@ When the loop ends, **report and stop** (below). Leave everything in the working
 Run the task's own **Review check** block, plus whichever of these the change touches. There
 is **no test-runner in this repo** — don't claim "tests pass."
 
-| Surface | Check |
-|---|---|
-| Any change | `npm run build` — must complete clean and build the expected page count |
-| Content collection | A schema violation fails the build. Confirm the page count changed the way you intended — a card-only project builds no page |
-| Anything observable | Drive it in the Browser pane and read the result back. A screenshot of the changed state is the proof |
-| Layout / responsive | Measure with `getComputedStyle` at 1280 / 900 / 600 / 400, don't eyeball a screenshot. Confirm `document.documentElement.scrollWidth <= innerWidth` |
-| Images | Check the emitted `srcset` and that `sizes` holds no CSS variable — the attribute is parsed by the preload scanner, which knows nothing about custom properties |
+| Surface                              | Check                                                                                                                                                                  |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Any change                           | `npm run build` — must complete clean and build the expected page count                                                                                                |
+| Content collection                   | A schema violation fails the build. Confirm the page count changed the way you intended — a card-only project builds no page                                           |
+| Anything observable                  | Drive it in the Browser pane and read the result back. A screenshot of the changed state is the proof                                                                  |
+| Layout / responsive                  | Measure with `getComputedStyle` at 1280 / 900 / 600 / 400, don't eyeball a screenshot. Confirm `document.documentElement.scrollWidth <= innerWidth`                    |
+| Images                               | Check the emitted `srcset` and that `sizes` holds no CSS variable — the attribute is parsed by the preload scanner, which knows nothing about custom properties        |
 | Anything behind IntersectionObserver | The Browser pane suspends the rendering lifecycle when hidden, and IO delivery with it. `document.visibilityState` is the first thing to check before believing a zero |
-| Deploy | `./deploy.sh --dry-run` shows the exact file list. Never claim deployed without the HTTP 200 check the script runs |
+| Deploy                               | `./deploy.sh --dry-run` shows the exact file list. Never claim deployed without the HTTP 200 check the script runs                                                     |
 
 Report what you actually ran and what it returned. A skipped check gets said out loud, not
 omitted.
@@ -161,4 +161,4 @@ snapshots written), so a run that ends here is cleanly resumable by re-invoking.
   Outcome line if the plan is done.
 
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19
