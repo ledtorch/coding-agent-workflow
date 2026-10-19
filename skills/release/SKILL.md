@@ -26,7 +26,9 @@ auto-increment.
 > **This is a static site.** There is no app binary, no store build, and no version string
 > that has to agree across build configs — so there is no version-match gate. The tag is
 > the only version that exists. If `package.json` is ever brought under real versioning,
-> add the check back here in the same pass.
+> add the check back here in the same pass. When more than one surface ships (e.g. web +
+> iOS), they carry the **same** version, bumped together in one commit; a mismatch between
+> the sources is itself a stop.
 
 ## Workflow
 
@@ -96,7 +98,9 @@ Nothing above that: no `# vX` heading, no date line, no restatement of the title
    actually contains, never from commit types or scope prefixes. The trailing thesis says
    what moved in that area: `### 📄 Case studies — the flagship study lands`. **Take the emoji from
    the table below** — a theme that changes glyph between releases reads as a different
-   area to anyone skimming the tag list.
+   area to anyone skimming the tag list. **One blank line before every section header**,
+   including the first after the stat line: a header that follows a bullet directly reads
+   as part of the list above it.
 4. **Bullets are `- **<claim>** — <evidence>`.** The bold lead-in is the takeaway; the text
    after the em-dash is what makes it true. Name real identifiers in backticks
    (`ProjectCard.astro`, `content.config.ts`, `--column`). Keep the concrete deciding fact —
@@ -216,4 +220,4 @@ say so if such a file exists.
 - Deploy result — the HTTP status the script reported, or that it wasn't run.
 
 
-**Last Updated**: 2026-08-09
+**Last Updated**: 2026-10-19
