@@ -82,8 +82,7 @@ Never dump raw agent reports.
 
 ## Hard rules
 - Main thread orchestrates only. Reads >3 files? Use `Task`.
-- Always include a critic. Critics must disagree, not approve.
-- Auto/Ask follows auto-mode — don't invent new classifications.
+- Always include a critic. Critics must disagree, not approve — re-prompt one that rubber-stamps.
 - Cite `file:line` or doc section for every claim.
 
 ## Caps
@@ -92,22 +91,11 @@ Never dump raw agent reports.
 - Max 5 agents per layer
 - Max 10 agents total per /team invocation
 - Max 4 DAG layers (deeper = wrong problem)
-- Max 2 rollbacks (already in Gate 2)
 
 **Soft (debug signal):**
 - Total token budget ~60k; per-agent report ~4k
 - Persistently over → re-scope, you over-fanned
-
-**Principle:**
-- Reports should be the smallest table that conveys findings.
-  Trust the model to self-size; the soft caps are guard-rails, not gates.
-
-## Anti-patterns
-- Asking permission for read-only research
-- Serial `Task` dispatch when parallel is possible
-- Full rollback when only one node failed
-- Critic that rubber-stamps (re-prompt to disagree)
-- Dumping raw sub-agent output instead of synthesizing
+- Per-agent report: the smallest table that conveys findings
 
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19

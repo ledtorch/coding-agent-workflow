@@ -29,13 +29,6 @@ left uncommitted for one holistic review before [`/commit`](../commit/SKILL.md).
 order*; build executes. It never re-plans, never reorders, and never invents a task that
 isn't in the doc.
 
-> **Why batch is safe without commits.** Checkpointing (commits between tasks) and batching
-> (proceeding to the next task) are different things. Commits stay forbidden
-> (this workflow's standing rule 1, restated in `references/SKILL.md` where that exists);
-> what actually gates the run is **per-task verification** — a task that doesn't verify
-> clean halts the run before it contaminates later work — plus **per-task patch snapshots**
-> (below) as commit-free rollback points.
->
 > **The honest trade:** without a user review between tasks, a slightly-off interpretation
 > in an early task can propagate before the user sees it. The per-task acceptance criteria
 > and *Files likely touched* bounds are the mitigation — hold them tightly, and pause on
@@ -43,11 +36,9 @@ isn't in the doc.
 
 ## Scope (the plan doc path)
 
-The input is **a plan doc path**, optionally followed by a task number:
-
-- `/build references/build-place-contact-action.md` → **all** remaining unchecked tasks, in
+- `/build references/build-<slug>.md` → **all** remaining unchecked tasks, in
   plan order, until done or interrupted.
-- `/build references/build-place-contact-action.md 3` → **Task 3 only**, dependencies
+- `/build references/build-<slug>.md 3` → **Task 3 only**, dependencies
   permitting, then stop. Use this to isolate a risky task deliberately.
 - **Empty** → list the plan docs under `references/` with unchecked tasks and ask which.
   Never guess.
@@ -62,10 +53,9 @@ the user can interrupt.
    table, and Logic Map bound what every task may do.
 2. `references/SKILL.md` — route to the reference docs this plan's surface
    touches, and read them. The plan's *References Read* section lists what planning consulted.
-3. `references/development/conventions.md` — code rules, design tokens, component patterns.
-   Required before any code change, per SKILL.md.
-4. `references/development/architecture.md` — where the code goes, and the content-collection
-   contract.
+3. `references/development/conventions.md` — the project's code rules.
+4. `references/development/architecture.md` — where the code goes, and the data contract
+   (schema, API shape).
 
 Skipping any is a build failure — restart from B.0.
 
@@ -92,11 +82,11 @@ interrupt gate fires):
 5. **Verify** (below). A task that can't verify clean fires the interrupt gate — do not
    proceed to the next task on top of broken work.
 6. **Sync the docs.** A change that makes a reference doc wrong isn't done — update it and
-   bump its `Last Updated` in this same pass. New shared code↔doc data pairs go in
-   architecture.md §9.
+   bump its `Last Updated` in this same pass. New shared code↔doc data pairs go in the
+   section of architecture.md that lists them.
 7. **Tick the checkbox** in the plan doc, and flip its **Status** line to `IN PROGRESS`
    (or `SHIPPED` when this was the last task). On SHIPPED, fill the plan's `## Outcome`
-   one-liner (bugs · lines · files, zeros omitted — format: inspect.md §Outcome recap)
+   one-liner (format: [plan § Outcome recap](../plan/SKILL.md#outcome-recap))
    and repeat it in the final report.
 8. **Snapshot.** Write the cumulative diff to the session scratchpad:
    `git diff > <scratchpad>/build-<plan-slug>-task-<N>.patch`. These are the commit-free
@@ -109,18 +99,19 @@ When the loop ends, **report and stop** (below). Leave everything in the working
 
 ## Verification
 
-Run the task's own **Review check** block, plus whichever of these the change touches. There
-is **no test-runner in this repo** — don't claim "tests pass."
+Run the task's own **Review check** block, plus the project's own build, test and lint
+commands (from `references/` or its scripts), plus whichever rows below the change touches.
+Claim "tests pass" only when a test suite actually ran — if the project has none, say so.
 
 | Surface                              | Check                                                                                                                                                                  |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Any change                           | `npm run build` — must complete clean and build the expected page count                                                                                                |
-| Content collection                   | A schema violation fails the build. Confirm the page count changed the way you intended — a card-only project builds no page                                           |
+| Any change                           | The project's build completes clean, and its output (pages, routes, bundles) has the count you expect                                                                  |
+| Schema or data contract              | A violation should fail the build or tests. Confirm the output changed the way you intended, and only that way                                                         |
 | Anything observable                  | Drive it in the Browser pane and read the result back. A screenshot of the changed state is the proof                                                                  |
-| Layout / responsive                  | Measure with `getComputedStyle` at 1280 / 900 / 600 / 400, don't eyeball a screenshot. Confirm `document.documentElement.scrollWidth <= innerWidth`                    |
+| Layout / responsive                  | Measure with `getComputedStyle` at the project's breakpoints, don't eyeball a screenshot. Confirm `document.documentElement.scrollWidth <= innerWidth`                 |
 | Images                               | Check the emitted `srcset` and that `sizes` holds no CSS variable — the attribute is parsed by the preload scanner, which knows nothing about custom properties        |
 | Anything behind IntersectionObserver | The Browser pane suspends the rendering lifecycle when hidden, and IO delivery with it. `document.visibilityState` is the first thing to check before believing a zero |
-| Deploy                               | `./deploy.sh --dry-run` shows the exact file list. Never claim deployed without the HTTP 200 check the script runs                                                     |
+| Deploy                               | Use the project's dry-run, if it has one, to see the exact file list. Never claim deployed without an HTTP 200 from the live URL                                       |
 
 Report what you actually ran and what it returned. A skipped check gets said out loud, not
 omitted.
@@ -129,8 +120,8 @@ omitted.
 ## Never
 
 - **Never `git commit`.** Not per task, not "to checkpoint," not when the plan says to. The
-  user commits via [`/commit`](../commit/SKILL.md). This is the repo's first standing rule — the
-  patch snapshots exist precisely so batch mode never needs commits.
+  user commits via [`/commit`](../commit/SKILL.md). Standing rule 1 (`references/SKILL.md`,
+  where that exists).
 - **Never mark a task complete on unverified work.** A checkbox is a claim.
 - **Never continue past a failed verification** — the next task builds on sand.
 

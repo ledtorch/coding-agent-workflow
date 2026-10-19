@@ -13,17 +13,13 @@
 # init  (--init)   no doc layer yet. Also writes TODO stubs for the three paths the
 #                  commands read, plus references/features/, for /setup to fill.
 #
-# Commands are COPIED, so each project owns its own. Edit them freely — nothing you change
-# here reaches another project, and deleting this clone breaks nothing already installed.
-# A copy you have edited is never overwritten; --update takes the source version instead.
+# Commands are COPIED, so each project owns and may edit its own, and deleting this clone
+# breaks nothing already installed. An edited copy is replaced only by --update.
 #
 # Targets:
 #   <project>/references/development/commands/<name>   real files, this project's own
 #   <project>/.claude/skills/<name>   → ../../references/development/commands/<name>
 #   <project>/.agents/skills/<name>   → ../../references/development/commands/<name>
-#
-# Those two hops are relative and stay inside the project, so commit all of it — a teammate
-# who clones the repo gets the commands without running anything.
 #
 # One source file per command lives at skills/<name>/SKILL.md.
 
@@ -128,7 +124,7 @@ TODO — one line per kind of file, each naming the existing file that proves th
 
 ## Load-bearing boundaries
 
-TODO — the data contract (schema, content collection, API shape) and which boundaries
+TODO — the data contract (schema, data model, API shape) and which boundaries
 break things when crossed.
 EOF
 
@@ -203,8 +199,7 @@ for dir in "${TARGETS[@]}"; do
   for cmd in "$PROJECT/$HUB"/*/; do
     [[ -e "$cmd" ]] || continue
     n="$(basename "$cmd")"
-    # Relative and wholly inside the project, so it survives a rename and resolves on a
-    # teammate's clone. -n so an existing symlink is replaced rather than nested in itself.
+    # -n so an existing symlink is replaced rather than nested in itself.
     ln -sfn "../../$HUB/$n" "$dir/$n"
     c=$((c + 1))
   done
@@ -275,9 +270,6 @@ cat <<'EOF'
 Then the rest:
   Claude Code   /plan   /build   /inspect   /commit   /release
   Codex         $plan   $build   $inspect   $commit   $release
-
-Codex also picks a command implicitly when your request matches its description —
-say "audit this file for dead code" and $inspect can trigger on its own.
 
 Everything installed belongs to the project — commit all of it:
 

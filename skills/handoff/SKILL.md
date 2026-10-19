@@ -29,10 +29,10 @@ A handoff drifts two ways: claims written from conversation memory that no longe
 **At write time — verify every claim.**
 
 1. The Context block above is captured fresh at invocation. Treat it, not conversation memory, as the truth about tree state.
-2. Every file path, symbol, section anchor (`architecture.md §Content collection`), and count ("39 cases green") the draft names gets checked against the tree (Grep / Read / ls) **before the document is emitted**. A failed check is fixed or flagged — never emitted as remembered.
+2. Every file path, symbol, section anchor (`architecture.md §<Section>`), and count ("<N> tests green") the draft names gets checked against the tree (Grep / Read / ls) **before the document is emitted**. A failed check is fixed or flagged — never emitted as remembered.
 3. **Attribute the working tree.** `git status` shows everything — pre-existing and parallel-session files included. Cross-check file mtimes (`ls -laT <file>`) against the session's timespan before claiming a file as this session's; anything foreign is omitted or labeled *"not this session's — do not sweep into commits."*
 
-**At pickup — make drift detectable.** The template's mandatory fingerprint line (HEAD · dirty counts · diff hash) is what §0's Verify step compares; the comparison protocol lives in §0's wording, not here. Why three signals: HEAD only moves on commit, so alone it is blind to edits in a dirty tree — the diff hash is what catches those. Accepted residual: `git diff HEAD` misses untracked-file *content* (the untracked count sees them appear); only an mtime spot-check at pickup catches that. Do not replace the fingerprint with a full tree snapshot — a copy goes stale on the first commit, and the next session has the real tree.
+**At pickup — make drift detectable.** The template's mandatory fingerprint line (HEAD · dirty counts · diff hash) is what §0's Verify step compares. Why three signals: HEAD only moves on commit, so alone it is blind to edits in a dirty tree — the diff hash is what catches those. Accepted residual: `git diff HEAD` misses untracked-file *content* (the untracked count sees them appear); only an mtime spot-check at pickup catches that. Do not replace the fingerprint with a full tree snapshot — a copy goes stale on the first commit, and the next session has the real tree.
 
 ## Output format
 
@@ -76,19 +76,16 @@ A short list of `references/*.md` files the next agent should read BEFORE touchi
 **Always include** (the baseline):
 
 - [`references/SKILL.md`](references/SKILL.md) — index of all reference docs
-- [`references/development/conventions.md`](references/development/conventions.md) — code rules, styling tokens, architecture rules
-- [`references/development/architecture.md`](references/development/architecture.md) — stack, project structure, content-collection contract
+- [`references/development/conventions.md`](references/development/conventions.md) — numbered code rules
+- [`references/development/architecture.md`](references/development/architecture.md) — stack, project structure, data contract, load-bearing boundaries
 
-**Conditionally include** — scan only the area(s) the session actually touched, then attach the matching docs:
+**Conditionally include** — scan only the area(s) the session actually touched, then attach the matching docs, not the whole folder:
 
-| Session touched…                           | Attach                                                      |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| Components, layouts, styling, build config | `references/development/conventions.md` · `architecture.md` |
-| The content collection or a case study     | `architecture.md` § Content collection                      |
-| Motion, reveals, transitions               | `references/development/animation.md`                       |
-| Deploy, the server, DNS, TLS               | `references/ops/deploy.md`                                  |
+| Session touched… | Attach                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| `<area>`         | its doc under `references/` (`references/<path>/<area>.md`), or the `architecture.md §<Section>` that owns it |
 
-Skip what the session didn't touch. Attach only the docs whose topic it actually touched — not the whole folder. If a touched area has no doc, flag it inline: *"⚠️ No reference doc exists for `<area>` yet — flag to user."*
+If a touched area has no doc, flag it inline: *"⚠️ No reference doc exists for `<area>` yet — flag to user."*
 
 
 ### Section 2 — What shipped this session
@@ -104,9 +101,9 @@ Skip what the session didn't touch. Attach only the docs whose topic it actually
 - File renames without semantic change
 
 **Include:**
-- Architecture decisions made (e.g. *"switched Adapt response to SSE with `targets`/`result` event split"*)
+- Architecture decisions made (e.g. *"switched `<endpoint>` to `<transport>` with a `<eventA>`/`<eventB>` split"*)
 - New stores, modules, ops, endpoints, or contracts
-- Discoveries that change how things work (e.g. *"`structuredClone` fails on Vue reactive Proxies — must use JSON round-trip in stores"*)
+- Discoveries that change how things work (e.g. *"`<API>` fails on `<object kind>` — must use `<workaround>` in `<layer>`"*)
 - API/breaking changes (any model/contract version bump, deprecated SDK methods, etc.)
 - Anything the next agent MUST know to not re-litigate decisions
 
@@ -146,8 +143,8 @@ Do NOT fabricate tasks to fill space.
 
 - **Verify before building** — a non-trivial change with no run evidence from this session (backend changed, server never restarted). Already-verified work is a §2 line, not a task (check 5). When it applies, lead with it.
 - **Refactor candidates** — dead code, duplicated logic, stale comments noticed during this session.
-- **Promised but deferred** — anything the user explicitly said "later" or "post-demo" about.
-- **Spawned chips** — only if STILL ACTIONABLE. If already addressed this session, mention in §2 instead.
+- **Promised but deferred** — anything the user explicitly said "later" or "after `<milestone>`" about.
+- **Spawned chips** — only if STILL ACTIONABLE.
 - **Known caveats** — partial implementations, missing error handling, hard-coded fallbacks.
 
 If the next task depends on a user decision, phrase as a decision item, not a build item.
@@ -158,14 +155,14 @@ If the next task depends on a user decision, phrase as a decision item, not a bu
 2. Already covered by §1 prerequisites the next agent will read anyway? Redundant — delete.
 3. Specific to this session's work? Generic backlog belongs in the standing TODO doc, not the handoff.
 4. Figured out from `git log` + `git diff` alone? "Review what shipped" is implicit — don't restate.
-5. Describes work already **completed** this session (built / fixed / verified)? That's §2. §3 is only for work the NEXT agent must still do — a finished feature is never a "task."
+5. Describes work already **completed** this session (built / fixed / verified)? That's §2.
 
 **Length:** 3-5 real items typical. 1-2 is fine. 0 → switch to Case A. If writing item 6+, audit items 5-6 against the checks above.
 
 ## Argument handling
 
 - **No arguments**: dump the handoff document to chat for copy-paste into the next session.
-- **With argument** (e.g. `/handoff .claude/handoffs/2026-05-23-journey-sse.md`): treat the input as a file path and write the document there with `Write`, then confirm the path in chat. Create the directory first if needed.
+- **With argument** (e.g. `/handoff .claude/handoffs/<YYYY-MM-DD>-<topic>.md`): treat the input as a file path and write the document there with `Write`, then confirm the path in chat. Create the directory first if needed.
 
 ## Tone
 

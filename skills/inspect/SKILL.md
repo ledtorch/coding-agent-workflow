@@ -21,16 +21,15 @@ State the targets and their line counts in one line so the user can interrupt.
 The named paths, nothing else. No target → ask which files; never guess.
 
 Reading is unrestricted — read anything, anywhere, to *prove* a finding. **Editing is
-zero.** `/inspect` never modifies a file, including its targets. The deliverable is a
-document, and the user decides whether any of it gets built. One exception: a
+zero.** `/inspect` never modifies a file, including its targets. One exception: a
 `build-<slug>.md` plan the refact plan supersedes is deleted in the same pass —
 §Superseding a build plan.
 
 ## Step 0: Required reading (blocking)
 
 1. `references/SKILL.md` — route to the docs covering the targets' feature area
-2. `references/development/conventions.md` — Rules 1–9; half the detections below are
-   restatements of them
+2. `references/development/conventions.md` — its numbered rules; half the detections below
+   are restatements of them
 3. Whatever feature/data doc SKILL.md routes to for each target
 
 A finding that contradicts a reference doc is a finding **about the doc too**. Record both;
@@ -64,7 +63,7 @@ Before detecting anything, find every file that shares a surface with a target:
 
 Then **state the scope in one line before proceeding** — the targets, the neighbours pulled
 in, and why. That is the user's interrupt point. Do not write a plan document to describe
-an audit you haven't run; a sentence is enough, and it costs nothing to reject.
+an audit you haven't run; a sentence is enough.
 
 ## Step 3: The six detections
 
@@ -77,11 +76,12 @@ One constant, cap, or vocabulary declared in N places — the highest-value dete
 and the one greps miss, because the copies rarely share a name. Count **every** layer:
 server, client, schema constraint, prompt, doc. A cap enforced in code but absent from the
 schema is a real gap; so is a prompt instructing a model to emit more than the code accepts.
-Cross-check `architecture.md` §9 — a pair that belongs there and isn't is itself a finding.
+Cross-check the section of `architecture.md` that lists shared code↔data pairs, if it has
+one — a pair that belongs there and isn't is itself a finding.
 
 ### D3 — Dead code
-Exports, components, branches, columns nothing reaches. **Prove dead, don't infer it** —
-see Step 3.
+Exports, components, branches, columns nothing reaches. **Prove it dead** — Step 4's grep
+rules.
 
 ### D4 — Wrong-sized abstraction
 Packaging debt in both directions. Too *little* structure accumulates without anyone
@@ -103,16 +103,15 @@ while taxing every reader who has to trace through it.
 **Too much:**
 - **A pass-through wrapper** — a function whose body only forwards to another function.
   Delete it; the call site should name the real thing.
-- **A "shared" module with exactly one consumer** — indirection wearing a reuse costume.
-  §Extract or inline owns the counts; this bullet makes single-consumer modules something
-  the audit *hunts*, not something it notices only while judging a fix for another finding.
+- **A "shared" module with exactly one consumer** — indirection wearing a reuse costume;
+  counts per §Extract or inline.
 - **A layer that decides nothing** — every method delegates 1:1 to the layer below, so
   the reader opens two files to learn one fact.
 - **Speculative generality** — options, modes, or parameters nothing passes. Prove
   "nothing passes it" the same way as dead code (Step 4's grep rules).
 
 ### D5 — Logic bugs
-Ranked by what actually bites in this codebase:
+Ranked by how often each bites in practice:
 - **Swallowed failures** — an error returned as a payload rather than raised, a result
   discarded, a handler that logs success unconditionally
 - **Unguarded async actions** — a post-await write to an element that may already be gone,
@@ -132,23 +131,25 @@ Ranked by what actually bites in this codebase:
 - Work repeated on a hot path that could be computed once
 - List endpoints with no pagination
 
-Quantify where you can: "one query per row, ~40 rows on the profile" beats "this could be
+Quantify where you can: "one query per row, ~40 rows per page load" beats "this could be
 slow."
 
 ### What the target's *kind* obliges
 Six detections are generic; these are the contracts a component owes by virtue of what it
 is. Check the row that matches each target — a target that skips its row is a finding.
 
-| Target kind         | Must hold                                                                                                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| View or route       | Route registered and its `name` matches the file · back-stack and origin-return behave (`features/view-return.md`) · deep-link entry works                                  |
-| Store               | Registered wherever the project resets user state on sign-out · persisted drafts carry the project's save-guard · storage key follows the project's versioned naming scheme |
-| Composable          | Category matches its return shape — data vs behavior (Rule 4) · no side effects on import · singletons marked                                                               |
-| Component           | State at the narrowest scope (Rule 1) · no direct `fetch` (Rule 3) · overlay prefix matches its surface (Card / Sheet / Modal)                                              |
-| Endpoint            | Handler is async · response model declared · 404-not-403 posture where the code shouldn't be confirmed · auth resolved the same way as its siblings                         |
-| Schema or migration | Every application-enforced rule backed by a constraint, or the asymmetry recorded · pending migrations still pending                                                        |
+| Target kind                                     | Must hold                                                                                                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| View or route                                   | Registered, and its name matches the file per the project's routing convention · back navigation and return-to-origin behave as the project's navigation doc says · deep-link entry works                     |
+| Store                                           | Registered wherever the project resets user state on sign-out · persisted drafts carry the project's save-guard · storage key follows the project's versioned naming scheme                                   |
+| Shared logic module (hook, composable, service) | Its category matches its return shape (data vs behavior), per the conventions · no side effects on import · singletons marked                                                                                 |
+| Component                                       | State at the narrowest scope · data reaches it only through the layer the conventions sanction, never an ad-hoc fetch · its name matches the surface it renders on, per the project's naming convention       |
+| Endpoint                                        | Follows the project's handler conventions (sync/async, declared response shape) · answers not-found rather than forbidden where existence shouldn't be confirmed · auth resolved the same way as its siblings |
+| Schema or migration                             | Every application-enforced rule backed by a constraint, or the asymmetry recorded · pending migrations still pending                                                                                          |
 
-Dependencies point inward at every kind (Rule 2). A route importing from a service that
+Each check cites the conventions rule behind it, by number, when the project has one.
+
+Dependencies point inward at every kind. A route importing from a service that
 imports back is a finding regardless of which row applies.
 
 ## Step 4: Evidence — a finding is a claim until proven
@@ -156,7 +157,7 @@ imports back is a finding regardless of which row applies.
 Every finding carries `file:line` and a **failure scenario**: concrete inputs or state →
 wrong output. "This looks duplicated" is not a finding.
 
-Three proofs are mandatory, because each has burned this repo:
+Three proofs are mandatory, because each is a common way an audit goes wrong:
 
 - **Before calling something dead:** grep the symbol repo-wide, including route-lazy
   `() => import()`, star-imports, re-exports, and dynamic attribute access. Then check
@@ -218,9 +219,9 @@ proposed move, and the consumer count where relevant. Say plainly what you could
 verify and why. Don't soften a real problem into a hedge, and don't rubber-stamp: if the
 targets are genuinely sound, report that in one line rather than manufacturing findings.
 
-**Then, one plan doc**, following `plan.md` — its Task Template, its "Small Enough"
-definition, its Plan Document Template, and its naming rule (`references/refact-<slug>.md`,
-since fixes and consolidations add no new concept). Do not restate those here.
+**Then, one plan doc**, following [plan](../plan/SKILL.md) — its Task Template, its "Small
+Enough" definition, its Plan Document Template, and its naming rule
+(`references/refact-<slug>.md`).
 
 Three additions specific to `/inspect`:
 - Each task cites the finding that motivated it. A task with no finding behind it is scope
@@ -228,7 +229,8 @@ Three additions specific to `/inspect`:
 - Findings needing a product or architecture decision go in **Open Questions**, not the
   task list. They are not tasks until someone answers them.
 - The plan doc carries an **`## Outcome`** stub (one line: `Outcome: pending`) — the
-  at-a-glance recap filled when the plan ships. Format and rules: §Outcome recap below.
+  at-a-glance recap filled when the plan ships. Format and rules:
+  [plan § Outcome recap](../plan/SKILL.md#outcome-recap).
 
 ### Superseding a build plan
 
@@ -249,25 +251,9 @@ In the same pass that writes the refact plan:
    SKILL.md's index, doc cross-refs, code comments. Each pointer is re-aimed at the
    refact doc or deleted with its subject. Zero hits before reporting.
 
-`/build` then runs from the single `refact-<slug>.md`. This deletion-and-sweep is the
-one edit `/inspect` makes beyond writing its own plan doc — it removes a
-source-of-truth conflict, never code.
+`/build` then runs from the single `refact-<slug>.md`.
 
-## Outcome recap
-
-Written in the same pass that flips **Status** to SHIPPED (normally `/build`'s last task),
-directly under the Status line, and repeated in that session's chat report. One line:
-
-> **Outcome:** 3 bugs fixed · −75 lines (−120/+45) · merged 2 (fileA+fileB) · removed 1 · created 2
-
-Rules — tiny, precise, no padding:
-- **Fixed order:** bugs · lines · files (merged / removed / created). Eyes learn positions.
-- **Omit any zero-count axis entirely** — `0 bugs fixed` is noise, absence says it.
-- **Lines lead with the net** (sign included), raw `−removed/+added` in parens. Count code
-  and tests only; docs and the plan doc itself don't count.
-- **"Bugs fixed" = observable wrong behavior corrected** (the plan's `bug fix`-category
-  tasks plus incidentals) — refactors and hygiene don't inflate it.
-- Derive from `git show --numstat` over the plan's commits, not from memory.
+### Red-team the plan
 
 **Then red-team the plan you just wrote**, before the user sees it. A plan reviewed only by
 its author ships its author's blind spots — and the failure mode is specific: the document
@@ -292,16 +278,6 @@ Stop at the plan. `/inspect` does not fix what it finds, does not commit, and do
 into `/build`. The user reads the findings and decides whether the work is worth doing —
 that decision is the whole point of the command.
 
-## Common rationalizations
-
-| Rationalization                           | Reality                                                                                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| "The tests pass, so it's fine"            | Tests prove the paths they reach. Mutate the code; a suite that stays green was never covering it.                                    |
-| "The refactor makes it cleaner"           | Relocating complexity isn't reducing it. If the reader holds the same number of concepts, nothing improved.                           |
-| "It's only a small addition to this file" | Small diffs still bolt branches onto unrelated flows and push files past a healthy size. Judge the resulting structure, not the diff. |
-| "Nothing references it, so it's dead"     | Not until the grep covers lazy imports, re-exports, and importers that never call.                                                    |
-| "The doc says so"                         | Docs drift. Re-derive the claim from the code before building a finding on it.                                                        |
-
 ## Verification
 
 - [ ] Step 0 reading done and listed
@@ -314,15 +290,16 @@ that decision is the whole point of the command.
 - [ ] Every proposed remedy reduces the concept count, not just its location
 - [ ] Coverage claims tested by mutation, not by a passing suite
 - [ ] Prior docs' claims re-derived, not repeated
-- [ ] Plan doc passes `plan.md`'s own verification list
+- [ ] Plan doc passes [plan](../plan/SKILL.md)'s own verification list
 - [ ] Plan red-teamed on breakage, consistency, sequencing and its own claims
 - [ ] Nothing was edited — except a superseded `build-<slug>.md`, deleted with its
       pending tasks folded in and its inbound links swept to zero hits
 
 ## See Also
 
-`plan.md` (task and plan-doc templates) · `build.md` (executes one task at a time) ·
-`trim.md` (single-file, prose-only, zero behavior change) · `conventions.md` (Rules 1–9) ·
+[plan](../plan/SKILL.md) (task and plan-doc templates) · [build](../build/SKILL.md)
+(executes one task at a time) · [trim](../trim/SKILL.md) (single-file, prose-only, zero
+behavior change) · `conventions.md` (its numbered rules) ·
 `/security-review` (owns the security verdict)
 
 **Last Updated**: 2026-10-19

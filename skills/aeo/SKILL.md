@@ -8,7 +8,7 @@ description: Audit a website for Answer/Agent Engine Optimization — AI-crawler
 Audit the **named site** for Answer/Agent Engine Optimization: can AI crawlers reach it,
 can they read it without executing JavaScript, does its content chunk into citable answers,
 and do its signals support being resolved as a known entity. **Write no code, change no
-config.** The deliverable is findings plus a plan.
+config.**
 
 **Use when:** you want to know why AI assistants don't cite the site, or whether a site is
 ready for AI search before launch.
@@ -32,7 +32,7 @@ Two modes, used together when both are available:
   mode alone cannot prove reachability — say so in the report if live mode was unavailable.
 
 Reading and fetching are unrestricted. **Editing is zero** — `/aeo` never modifies a file,
-a robots.txt, or a deployment. The user decides whether any of it gets built.
+a robots.txt, or a deployment.
 
 ## Step 0: Required reading (blocking)
 
@@ -146,9 +146,10 @@ evergreen copy.
 
 ### C6 — Entity and author signals `PLAUSIBLE`
 
-Infrastructure, not a citation lever: schema feeds entity resolution, and engines lean on
-sources they can identify. Check: `Organization` JSON-LD with `sameAs` links, `Article`
-with a real author and dates, an `/about` page, author bios. Validate what exists — JSON
+Infrastructure, not a citation lever, and no rescue for content that fails C2 or C3:
+schema feeds entity resolution, and engines lean on sources they can identify. Check:
+`Organization` JSON-LD with `sameAs` links, `Article` with a real author and dates, an
+`/about` page, author bios. Validate what exists — JSON
 parses, matches visible content, present in raw HTML not injected client-side. **Do not
 promise citation gains from adding schema**: Google states none is needed for AI
 Overviews, and the one natural experiment (Ahrefs, 1,885 pages) found no uplift. Bing/
@@ -185,8 +186,6 @@ richer" is not a finding.
 - **Before calling content invisible:** show the raw-HTML extract that lacks it, not the
   framework's reputation. An SPA with prerendering passes; an "SSR" site with a
   client-only content island fails. Reality over config.
-- **Before repeating a factor's importance:** its tier caps its severity. A SPECULATIVE
-  factor argued into Critical is the audit failing its own contract.
 
 ## Step 4: Severity
 
@@ -210,7 +209,7 @@ unweighed factors is precision the evidence doesn't support; the verdict table s
 Say plainly what was not verified (repo mode only? pages sampled?) and why. If the site is
 genuinely sound, report that in one line rather than manufacturing findings.
 
-**Then, one plan doc**, following `plan.md` — its Task Template, its "Small Enough"
+**Then, one plan doc**, following [plan](../plan/SKILL.md) — its Task Template, its "Small Enough"
 definition, its naming rule. Each task cites the finding (and tier) that motivated it;
 fixes ordered by the check order above, because a C1 fix changes what every later check is
 worth.
@@ -230,17 +229,6 @@ touch templates, and does not roll into `/build`. The user reads the findings an
 what is worth doing — including the policy calls (training-bot access) that were never
 the audit's to make.
 
-## Common rationalizations
-
-| Rationalization                            | Reality                                                                                                                                                                       |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "Add llms.txt and AI will cite us"         | ~0.1% of AI-bot traffic touches it; no engine commits to it for search. Ceiling: Consider.                                                                                    |
-| "We have schema, so we're covered"         | The one natural experiment found no citation lift. Schema is entity infrastructure, not a lever — and it can't rescue content that fails C2 or C3.                            |
-| "Google renders our JS, so AI can read it" | Only Gemini renders JS. GPTBot, ClaudeBot, and PerplexityBot read the initial HTML and nothing else.                                                                          |
-| "We only blocked training bots"            | Search-index and user-fetch bots are separate UAs per operator. Verify each class; the block you remember is rarely the block you have.                                       |
-| "robots.txt allows it, so we're reachable" | WAF and CDN bot rules 403 crawlers robots.txt invites. Only a live fetch with a crawler UA proves reachability.                                                               |
-| "Our SEO work carries over"                | The GEO paper measured keyword optimization flat-to-negative for generative engines, while citations, quotes, and statistics gained 30–40%. Different game, different levers. |
-
 ## Verification
 
 - [ ] Step 0 reading done and listed, or its absence declared
@@ -251,14 +239,14 @@ the audit's to make.
 - [ ] No severity exceeds its tier's ceiling
 - [ ] WAF reality check performed, not inferred from robots.txt
 - [ ] Verdict table in chat; no composite score invented
-- [ ] Plan doc passes `plan.md`'s own verification list; every task cites a finding
+- [ ] Plan doc passes [plan](../plan/SKILL.md)'s own verification list; every task cites a finding
 - [ ] Report red-teamed for overselling, sampling, and its own claims
 - [ ] Nothing was edited
 
 ## See Also
 
-`plan.md` (task and plan-doc templates) · `build.md` (executes the fixes) · `inspect.md`
-(same contract, aimed at code) · Princeton GEO paper (arXiv 2311.09735) · llmstxt.org ·
-Vercel "The rise of the AI crawler"
+[plan](../plan/SKILL.md) (task and plan-doc templates) · [build](../build/SKILL.md)
+(executes the fixes) · [inspect](../inspect/SKILL.md) (same contract, aimed at code) · GEO
+paper (C4) · llmstxt.org · Vercel "The rise of the AI crawler"
 
 **Last Updated**: 2026-10-19

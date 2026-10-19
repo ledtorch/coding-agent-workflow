@@ -9,9 +9,8 @@ description: Breaks work into ordered tasks. Use when you have a spec or clear r
 Decompose work into small, verifiable tasks with explicit acceptance criteria — each small
 enough to implement, test, and verify in one focused session.
 
-**Use when:** a spec needs breaking into implementable units; a task feels too large or
-vague to start; work could be parallelized across agents/sessions; scope must be
-communicated to a human; implementation order isn't obvious.
+**Also use when:** scope must be communicated to a human, or implementation order isn't
+obvious.
 **NOT for:** single-file changes with obvious scope, or specs that already contain
 well-defined tasks.
 
@@ -21,8 +20,8 @@ Planning is **read-only** — the output is a plan document, never code.
 
 1. `references/SKILL.md` — doc index; route to every reference relevant to the request.
 2. `references/development/conventions.md` — any plan whose tasks touch code must respect it.
-3. `references/development/architecture.md` — the layer map and the content-collection
-   contract; a task that changes the schema changes every case study.
+3. `references/development/architecture.md` — the layer map and the data contract; a task
+   that changes a shared schema changes everything built on it.
 
 Skipping Step 0 is a planning failure — restart here. Docs drift: `grep` any file/route/
 flag a doc names before building on it.
@@ -62,20 +61,20 @@ Two relations, stated for **every** task:
 **Dependencies** — what must exist before what; build bottom-up:
 
 ```
-Content schema (src/content.config.ts)
+Schema (src/<area>/<schema-file>)
     │
-    ├── Content entries (src/content/projects/*.mdx)
-    │       │
-    │       └── Page / route (src/pages, src/pages/project/[...slug].astro)
-    │               │
-    │               └── Layout (src/layouts/BaseLayout.astro)
-    │                       │
-    │                       └── Component (src/components)
-    │                               │
-    │                               └── Design tokens (src/styles/global.css)
-    │
-    └── Assets (src/assets/images — optimised; public/ — served raw)
+    └── Data / API (src/<area>/<data-file>)
+            │
+            └── Route (src/<area>/<route-file>)
+                    │
+                    └── Layout (src/<area>/<Layout>)
+                            │
+                            └── Component (src/<area>/<Component>)
+                                    │
+                                    └── Design tokens (src/<area>/<tokens-file>)
 ```
+
+Draw the project's own graph from `architecture.md`; this one only shows the shape.
 
 Not every plan spans all layers — a UI-only task starts mid-graph; whatever layers the
 plan touches, build the lower one first.
@@ -194,6 +193,23 @@ tooling (`/build`, later sessions) reads this doc directly by path. After writin
 1. Keep its **Status** line current (`PLANNED` → `IN PROGRESS` → `SHIPPED`).
 2. **Never list it in a `SKILL.md` index.** Those indexes route to fact docs only; a plan is
    found by its path or by `ls references/build-*`.
+
+## Outcome recap
+
+A plan's `## Outcome` line is written in the same pass that flips **Status** to SHIPPED
+(normally `/build`'s last task), directly under the Status line, and repeated in that
+session's chat report. One line:
+
+> **Outcome:** 3 bugs fixed · −75 lines (−120/+45) · merged 2 (fileA+fileB) · removed 1 · created 2
+
+Rules — tiny, precise, no padding:
+- **Fixed order:** bugs · lines · files (merged / removed / created). Eyes learn positions.
+- **Omit any zero-count axis entirely** — `0 bugs fixed` is noise, absence says it.
+- **Lines lead with the net** (sign included), raw `−removed/+added` in parens. Count code
+  and tests only; docs and the plan doc itself don't count.
+- **"Bugs fixed" = observable wrong behavior corrected** (the plan's `bug fix`-category
+  tasks plus incidentals) — refactors and hygiene don't inflate it.
+- Derive from `git show --numstat` over the plan's commits, not from memory.
 
 ## Plan Document Template
 

@@ -13,8 +13,8 @@ directory, never the machine:
 ```
 
 The commands are copied into the project, so they become yours to edit and no two projects
-affect each other. Re-run any time to pick up new ones; `--update` also replaces the ones you
-have edited, and nothing else ever does.
+affect each other. Re-run any time to pick up new ones; only `--update` replaces ones you
+have edited.
 
 Then open your agent there and run **`/setup`** — `$setup` in Codex. It reads your codebase
 and finishes whichever half the script couldn't. You can stop reading here.
@@ -24,8 +24,6 @@ and finishes whichever half the script couldn't. You can stop reading here.
 Eleven commands that turn an agent from something you chat with into something you can run
 a release through. They are not prompt templates — each one is a contract about where judgment
 sits, what counts as verified, and what the agent is not allowed to do on its own.
-
-Extracted from a real project, so the examples are concrete rather than generic.
 
 Written once as [Agent Skills](https://agentskills.io), so the same file runs in both:
 `/plan` in Claude Code, `$plan` in Codex.
@@ -68,10 +66,6 @@ Supporting commands:
 
 ## Two modes
 
-The workflow installs into a repo, not into your home directory. There is no global install
-and no per-machine state — a project either carries the workflow or it doesn't, and you can
-see which by looking at it.
-
 What differs between the two is only **who owns `references/SKILL.md`**, the index the
 commands route through:
 
@@ -82,15 +76,12 @@ commands route through:
 | `/setup` then | reads your router and proposes the edit that wires in the commands and the three contract paths | reads your code and fills the scaffolded docs, for you to correct   |
 | Failure mode  | your router doesn't route to what the commands read                                             | a scaffold of plausible guesses nobody corrected                    |
 
-Adopt is the one that matters for adoption: a project with real docs already has an index,
-and overwriting it to install a workflow would be the rudest possible thing to do. `/setup`
-proposes the edit and you approve it — and if you or your agent would rather write it
-differently, that's fine, as long as it satisfies the contract below.
+In adopt, `/setup` proposes the edit and you approve it; write it differently if you prefer,
+as long as it satisfies the contract below.
 
 **`/setup` is not a gate.** Skip it and the commands still run; they just work from the code
 alone and say so at the top of each run, because a command that silently invents a
-convention is worse than one that admits it has none. It is still the single highest-value
-thing you can do per project, and every command will remind you until it exists.
+convention is worse than one that admits it has none.
 
 ### The contract
 
@@ -128,9 +119,8 @@ references/
 .agents/skills/<name>   →   ../../references/development/commands/<name>
 ```
 
-Adopt creates only `development/commands/` and the two symlink directories — the docs are
-already yours. Init adds the four files above as TODO stubs, each carrying a marker `/setup`
-looks for, so a stub is never mistaken for something someone wrote. **Neither mode ever
+Init adds the four doc files above as TODO stubs, each carrying a marker `/setup` looks for,
+so a stub is never mistaken for something someone wrote. **Neither mode ever
 overwrites an existing file.**
 
 ### The commands are copies, and they are yours
@@ -143,7 +133,6 @@ Copied, not symlinked, and that is the whole point:
 
 - **Edit them.** A command is a file in your repo. Change `/inspect`'s severity labels or
   `/commit`'s types to suit this project — nothing you change here reaches any other project.
-- **Projects don't touch each other.** Two repos installed from the same clone share nothing.
 - **The clone stops mattering.** Move it, delete it, `git pull` it — every project already
   installed keeps working, unchanged, because it holds its own copy.
 
@@ -151,26 +140,15 @@ Both symlink hops are **relative and stay inside the project**, so they survive 
 resolve on someone else's machine. Commit all of it — `references/`, `.claude/skills/`,
 `.agents/skills/`. A teammate who clones the repo has the commands without running anything.
 
-Re-running `install.sh` never overwrites a command you changed. It reports which ones differ
-from the source and leaves the decision to you:
-
-```
-  ! 1 command(s) differ from the source. Nothing was overwritten.
-    Either you edited your copy, or the source moved on — only you can tell:
-
-      inspect    diff -ru references/development/commands/inspect ~/coding-agent-workflow/skills/inspect
-```
-
-Read the diff, then `install.sh --update` to take the source version — losing your edits — or
-keep yours and ignore it. The script will not guess which you meant.
+Re-running `install.sh` never overwrites a command you changed: it lists each one that differs
+from the source with the `diff -ru` to read, and you decide — `--update` takes the source
+version (losing your edits), or keep yours.
 
 ## The docs are frameworks, not content
 
-`install.sh` is plain bash — it can copy the commands and lay out the tree, but it cannot know
-anything about your code. The reference docs are what `/setup` writes, by reading the
-codebase. Nothing is downloaded and nothing is copied from another project.
-
-They are **shapes to fill**, not files to fetch. Every project has a different stack,
+`install.sh` can copy the commands and lay out the tree, but it cannot know your code, so the
+reference docs are what `/setup` writes by reading it — **shapes to fill**, not files to
+fetch or copy from another project. Every project has a different stack,
 different rules, and different features, so what transfers is the structure and the altitude
 — a conventions file that numbers its rules so an audit can cite them, an architecture file
 that states boundaries rather than restating the directory tree.
@@ -184,8 +162,7 @@ that states boundaries rather than restating the directory tree.
 
 The commands read these before doing anything. That layer is the difference between an agent
 that checks a claim against something and one that checks it against its own memory — and it
-is the part only your codebase can supply, which is why `/setup` exists and why it runs once
-per project.
+is the part only your codebase can supply, which is why `/setup` exists.
 
 ## What actually makes them work
 
@@ -217,17 +194,17 @@ exists because context decays and the next session starts from zero.
 
 ## Adapting them
 
-**Edit the commands.** `references/development/commands/<name>/SKILL.md` is your copy, in
-your repo, and changing it affects this project alone. The constraints are the valuable part,
-so tighten them where this project needs it rather than working around them.
+**Edit the commands** in `references/development/commands/<name>/SKILL.md`. The constraints
+are the valuable part, so tighten them where this project needs it rather than working around
+them.
 
 The one file to leave alone is the clone at `~/coding-agent-workflow` — edit there and you
 change what every *future* install starts from, which is a different decision from adapting
 one project.
 
-Some commands still carry examples from the project they grew in — a static-site deploy step
-in `/release`, an Astro dependency graph in `/plan`. Those are illustrations of shape, not
-instructions; the structure around them is what transfers.
+The commands are written project-agnostic. Some command folders also carry an `example.md`
+of worked examples from a real project — for you to read and borrow from; the command never
+reads it.
 
 Each command opens with the shell commands it wants run first (branch, status, diff) rather
 than pre-injecting them, because that is what makes one file work in both agents. If you use

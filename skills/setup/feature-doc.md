@@ -1,8 +1,6 @@
 # The feature doc
 
-**Read by `/setup`.** It writes `references/features/example.md` from this — tailored to the
-project it is setting up, citing that project's real files, not these generic ones. Nothing
-here is copied verbatim; this is the shape and the reasoning behind it.
+**Read by `/setup`** (Step 2B §4), which writes `references/features/example.md` from it.
 
 The file `/setup` produces stays in place as the project's own template. Every feature doc
 written afterwards follows it: one doc per feature, and a feature earns one when someone
@@ -16,18 +14,18 @@ would otherwise have to read three files to answer "what is supposed to happen h
 a file that goes stale the first time someone refactors and helps nobody in between. Write
 what must hold — the invariants, the boundaries, the decisions and why they went that way.
 
-| Write this                                                                                                             | Not this                                               |
-| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| "Both paths return the same `AuthResponse`."                                                                           | "The login function calls the API and sets the token." |
-| "Dismissal requires `animationDone && webViewReady`, unless the 6-second cap forces both."                             | "There is a timer that dismisses the overlay."         |
-| "Never add a handwritten 401 after soft resolution — soft swallows errors and can misclassify an outage as anonymous." | "Use `resolve_viewer` for auth."                       |
+| Write this                                                                                     | Not this                                                |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| "Both `<entry paths>` return the same `<ResultType>`."                                         | "The `<function>` calls the API and stores the result." |
+| "`<Effect>` requires `<conditionA> && <conditionB>`, unless the `<N>`-second cap forces both." | "There is a timer that triggers `<effect>`."            |
+| "Never add `<shortcut>` after `<step>` — `<the failure it would cause>`."                      | "Use `<helper>` for `<concern>`."                       |
 
 The test: **would this line still be true after a refactor that changed every function name?**
 If yes, it belongs. If no, it belongs in the code.
 
 **Point at canonical code, never copy it.** When one file owns a rule, name it and forbid
-rederiving it: *"Canonical implementation is `handles.py`. Never rederive its regex,
-normalization, reserved list, or limits."* A copied regex is a second source of truth that
+rederiving it: *"Canonical implementation is `<module>`. Never rederive its `<regex,
+normalization, limits>`."* A copied regex is a second source of truth that
 drifts silently.
 
 ## The skeleton
@@ -39,7 +37,7 @@ then the flow, then the contracts, then what isn't done.
 # <Feature name>
 
 <2–4 dense sentences: what this is, who owns what, and what this document owns.
-Name the boundary explicitly — "Supabase owns OTPs/sessions; the app stores tokens."
+Name the boundary explicitly — "<external service> owns <X>; the app owns <Y>."
 If a sibling doc owns an adjacent concern, say so here and link it.>
 
 Status: <shipped | live | partial — and what "partial" excludes>
@@ -102,12 +100,10 @@ truth.** Without that line, a 🔵 section reads as a bug report.
 
 ## Wiring
 
-A feature doc that doesn't connect is a file nobody finds.
-
 | Wire                           | How                                                                                                                                                                            |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Into `references/SKILL.md`** | Add one line under Features, grouped with its neighbours. A doc missing from the router is invisible to every command.                                                         |
-| **To `architecture.md`**       | Link the section that owns the boundary you depend on (`architecture.md §6.1`). If your feature *creates* a load-bearing boundary, add it there — don't describe it only here. |
+| **Into `references/SKILL.md`** | Add one Routing row, grouped with its neighbours. A doc missing from the router is invisible to every command.                                                                 |
+| **To `architecture.md`**       | Link the section that owns the boundary you depend on (`architecture.md §<N>`). If your feature *creates* a load-bearing boundary, add it there — don't describe it only here. |
 | **To `conventions.md`**        | Cite rules by number when behavior depends on one. If the feature needs a rule that doesn't exist, that's a conventions change, not a paragraph here.                          |
 | **To siblings**                | Where two docs touch, each names the other and says which owns what. Two docs claiming one concern is the drift `/inspect` exists to catch.                                    |
 | **To code**                    | `file:line` for canonical instances and known violations alike. A named path is checkable; "the auth service" is not.                                                          |
@@ -119,10 +115,10 @@ A feature doc that doesn't connect is a file nobody finds.
 2. **Update in the same pass as the behavior.** A change that makes this doc wrong is not done
    until the doc is fixed. Bump the footer date.
 3. **The `**Last Updated**` footer is mandatory.** A doc without one is a bug, not a style choice.
-4. **One word per concept.** If the code says `Moment`, the doc says Moment — never "entry",
-   "item", or "stop" as a casual synonym.
-5. **Record known violations, don't hide them.** *"Known violation: `AddPlacePreview.vue:187`
-   posts multipart directly."* An honest exception list is what makes the rule trustworthy.
+4. **One word per concept.** If the code says `<Term>`, the doc says <Term> — never a near-synonym
+   used casually.
+5. **Record known violations, don't hide them.** *"Known violation: `src/<area>/<file>:<line>`
+   <does what the rule forbids>."* An honest exception list is what makes the rule trustworthy.
 6. **Flag conflicts instead of resolving them silently.** If the code contradicts this doc,
    both are suspect — say so and let a human pick.
 7. **No parallel docs.** If a concern already has a home, link it. Never open a second one.

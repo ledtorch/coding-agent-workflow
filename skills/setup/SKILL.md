@@ -40,7 +40,7 @@ have to exist:
 | `references/development/conventions.md`  | `/build` `/handoff` `/inspect` `/label` `/plan` `/team` `/trim` |
 | `references/development/architecture.md` | `/build` `/handoff` `/plan`                                     |
 
-Prose is the project's. Paths are not. This is the one thing setup must leave true.
+Prose is the project's. Paths are not.
 
 ## Step 0: Read the ground before proposing anything
 
@@ -70,16 +70,11 @@ Then identify the stack from what is actually present — `package.json`, `pypro
 
 State it so the user can interrupt before any file moves:
 
-> *"Astro 5 + TypeScript, 34 files under `src/`, `references/SKILL.md` already written —
-> adopt: I'll wire the commands into it rather than write my own."*
+> *"<stack and version>, <N> files under `<source dir>/`, `references/SKILL.md` already
+> written — adopt: I'll wire the commands into it rather than write my own."*
 
-**Stubs are not content.** `install.sh` leaves `architecture.md` and `conventions.md` behind
-carrying the marker `Stub from install.sh`. A file with the marker has never been filled:
-treat it as absent and overwrite it freely. Only a file *without* the marker is the user's,
-and that one is never overwritten without showing the diff first.
-`references/development/commands/` holds the commands themselves, copied in by the
-installer. They are the project's to edit, but not *yours* to edit during a setup — they are
-tooling, not project knowledge, and nothing here audits or rewrites them.
+**Stubs are not content.** A file carrying the `Stub from install.sh` marker has never been
+filled: treat it as absent.
 
 ## Step 2A: Adopt — wire into the docs that exist
 
@@ -102,12 +97,12 @@ whether it already sits at the contract path.
 
 Three moves, in preference order. **Ask; don't pick for them.**
 
-| Situation                                                 | Move                                                                                                                                                     |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Their doc is already at the contract path                 | Nothing to do                                                                                                                                            |
-| Their doc exists elsewhere                                | **Point** — write a short doc at the contract path whose entire body routes to the real one. No copying, so nothing can drift. Reversible in one delete. |
-| Their doc exists elsewhere and is the obvious single home | **Move** — `git mv` to the contract path, then sweep every inbound link to zero hits. Cleaner, but touches their tree.                                   |
-| No equivalent exists                                      | **Write** it, exactly as Step 2B does                                                                                                                    |
+| Situation                                                 | Move                                                                                                                   |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Their doc is already at the contract path                 | Nothing to do                                                                                                          |
+| Their doc exists elsewhere                                | **Point** — write a short doc at the contract path whose entire body routes to the real one. Reversible in one delete. |
+| Their doc exists elsewhere and is the obvious single home | **Move** — `git mv` to the contract path, then sweep every inbound link to zero hits. Cleaner, but touches their tree. |
+| No equivalent exists                                      | **Write** it, exactly as Step 2B does                                                                                  |
 
 Never copy content into the contract path. A copied rule is a second source of truth, and it
 will drift in the direction of whichever file someone edits next.
@@ -135,9 +130,8 @@ and tailored to their stack — see Step 2B §4.
 
 ## Step 2B: Init — build the layer
 
-Four files. **Each claim must come from a file you opened**, and every path you name must be
-verified with `ls` or `grep` before it goes in. A scaffold full of plausible-looking guesses is
-worse than no scaffold: the commands will trust it.
+Four files. **Each claim must come from a file you opened.** A scaffold full of
+plausible-looking guesses is worse than no scaffold: the commands will trust it.
 
 Where a fact is genuinely unknown, write `TODO — <the specific question>` rather than a guess.
 A visible hole is a working document; a confident wrong sentence is a trap.
@@ -180,7 +174,7 @@ git ls-files | awk -F/ 'NF>1 {print $1"/"$2}' | sort -u | head -40
 ```
 
 Then the parts a newcomer gets wrong: where a new file of each kind goes, what the data
-contract is (schema, content collection, API shape), and which boundaries are load-bearing.
+contract is (schema, content model, API shape), and which boundaries are load-bearing.
 Name the file that proves each one.
 
 ### 3. `references/development/conventions.md`
@@ -203,7 +197,6 @@ illustrations, their conventions rules cited by the numbers you just assigned.
 Do not copy it verbatim. A template naming another project's framework teaches the wrong
 shape, and the first person to follow it inherits the mismatch.
 
-The file stays in place as the project's template; feature docs written later follow it.
 Write no actual feature docs here — that is the user's work, and `/plan` or `/build` will
 prompt for them as features get built.
 
@@ -213,10 +206,9 @@ Show the user every file you wrote and ask them to correct it. You inferred thes
 they know which inferences are wrong. Their corrections are the point of the exercise — the
 docs are only worth what this review puts into them.
 
-Then remind them: `references/` belongs to **their** repo and should be committed. It is
-project knowledge, not tooling. Commit `.claude/skills/` and `.agents/skills/` too — both
-hops are relative and resolve inside the repo, so a teammate who clones it has the commands
-without running the installer.
+Then remind them to commit `references/` (project knowledge, not tooling), `.claude/skills/`
+and `.agents/skills/`: both hops are relative and resolve inside the repo, so a teammate who
+clones it has the commands without running the installer.
 
 ## If the user stops here
 
