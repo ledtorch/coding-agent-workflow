@@ -192,6 +192,8 @@ tooling (`/build`, later sessions) reads this doc directly by path. After writin
 
 
 1. Keep its **Status** line current (`PLANNED` → `IN PROGRESS` → `SHIPPED`).
+2. **Never list it in a `SKILL.md` index.** Those indexes route to fact docs only; a plan is
+   found by its path or by `ls references/build-*`.
 
 ## Plan Document Template
 
@@ -273,4 +275,4 @@ project-wide Definition of Done, the standing bar every task clears before it co
 done. See `references/SKILL.md` § Standing rules where that exists; with no reference layer,
 the standing bar is whatever the codebase's own tests and build already enforce.
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-19
