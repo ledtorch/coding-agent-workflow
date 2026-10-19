@@ -86,7 +86,7 @@ The fix is almost never deleting facts. It's **giving each fact one home and poi
 it.** Most of T.2 dissolves into that one move.
 
 
-## T.2 The eleven bloat patterns
+## T.2 The twelve bloat patterns
 
 Run the detection command, then judge. A hit is a candidate, not a verdict.
 
@@ -255,6 +255,23 @@ carrying something the fact section doesn't: a residual, a caveat, a known gap.
 live, v0.02.4 in review` while Current position already read "v0.02.3 live; v0.02.4 submitted,
 in review." Two homes for one status; deleting the box lost nothing.
 
+### P12 — Markdown tables that are not space-aligned
+Docs are read as raw text, so every table is **space-aligned**: each cell padded to its
+column's widest cell, so the pipes line up. `| Free | 5 |` → `| Free    | 5     |`. This
+is the one pattern that may add characters; it never adds lines, and a table whose pipes
+don't line up isn't trimmed.
+
+```bash
+python3 references/development/commands/trim/align-tables.py TARGET           # list; exit 1 if unaligned
+python3 references/development/commands/trim/align-tables.py --write TARGET   # fix
+```
+
+**Fix:** run it with `--write`. It pads every cell to the column's widest cell (CJK and emoji
+count as 2 columns), sizes the delimiter row to match and keeps its `:` colons, and leaves cell
+text, the cell count, escaped `\|` and fenced code alone. Don't align by hand, because `awk`
+measures bytes, not display width. **Exception:** runtime LLM prompt files the app loads stay
+as they are, because padding changes the prompt.
+
 
 ## T.3 What to keep (the signal)
 
@@ -314,9 +331,9 @@ Mandatory before reporting:
   A heading you renamed silently breaks every inbound link.
 - **Code:** it still builds/lints by the project's check, and behavior is unchanged.
 
-**Report:** lines before → after, what was cut by category (mapped to P1–P11), what was
+**Report:** lines before → after, what was cut by category (mapped to P1–P12), what was
 deliberately kept and why, and an explicit **"no actionable fact lost"** confirmation. Never
 claim a behavior change you didn't make.
 
 
-**Last Updated**: 2026-07-25
+**Last Updated**: 2026-10-19
