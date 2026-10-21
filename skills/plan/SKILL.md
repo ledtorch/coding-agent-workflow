@@ -121,6 +121,61 @@ feature docs, which record what's already built.
 - Record results in the plan's **Reuse** table. Duplication costs tokens twice — build and
   upkeep. New code proposed without naming what was searched = incomplete plan.
 
+## Step 7: Prove Every Claim
+
+The planner's own pass over the written plan. Defects found in review trace back to what
+the plan asserted without reading.
+
+- **Cite or label.** Every statement about how the code behaves *today* cites the
+  `path:line` it was read from. Not read → label it **Assumption** and add it to Open
+  Questions. A field's name is not its behavior — read the code that writes it.
+- **Trace past the last task.** Walk every user-facing flow end to end, then one step
+  further: where the user lands, what refreshes, what persists, what other surfaces
+  (lists, maps, detail pages, the edit path) show next. A gap there is a missing task.
+- **Runnable and safe checks.** Every review check runs as written, in test/QA
+  environments only, changes nothing on the host machine or in other users' state, and
+  names its cleanup for anything it writes to a shared store.
+
+## Step 8: Independent Review
+
+An author can't see their own blind spots. Before asking the human to approve:
+
+1. **Spawn one read-only subagent** — a planning or explore agent that cannot edit files.
+   Give it only the plan's path and the repo, never the planning conversation, so it
+   doesn't inherit the planner's reasoning.
+2. **Brief it to break the plan**, not to "review" it — use the prompt below.
+3. **Verify each finding against the code** before acting on it; reviewers produce false
+   positives too. Apply the verified ones to the plan directly — never add a review log
+   or changelog section.
+4. **Max 2 rounds.** Round 2 still yields verified defects → stop and surface the
+   planning problem to the human instead of looping.
+
+Same idea as [`/team`](../team/SKILL.md)'s critic node and
+[`/inspect`](../inspect/SKILL.md)'s red-team pass.
+
+Reviewer prompt:
+
+```text
+Read the implementation plan at <plan-path>, then the code in this repo it touches.
+You are read-only. Your job is to break the plan, not to approve it.
+
+(a) Claims — for every statement about how the code behaves today, read the cited
+    path:line and try to disprove it. Flag any such statement with no citation.
+(b) Flows — walk each user-facing flow past its final task: where the user lands,
+    what refreshes, what persists, what other surfaces show next. Flag every gap.
+(c) Acceptance criteria — for each, find a concrete input or state under which the
+    planned tasks would fail it, or that it leaves undefined.
+(d) Review checks — is each runnable as written, and safe: test/QA environments only,
+    no change to the host machine or other users' state, cleanup named for anything
+    written to a shared store?
+(e) Omissions — list what the change will touch that the plan never mentions:
+    callers, other surfaces, shared state.
+
+Return a section for each of (a)–(e). Each is either "no findings" or a list of:
+- <defect> — evidence: <path:line> — <how it breaks the plan>
+No praise, no summary.
+```
+
 ## "Small Enough" — the Definition
 
 All six must hold; fail any one → break it down further:
@@ -269,7 +324,7 @@ Rules — tiny, precise, no padding:
 | [Risk] | [High/Med/Low] | [Strategy] |
 
 ## Open Questions
-- [Question needing human input]
+- [Question needing human input, or an Assumption from Step 7]
 ```
 
 ## Verification (before implementation starts)
@@ -282,6 +337,9 @@ Rules — tiny, precise, no padding:
 - [ ] Reuse table filled — every "Build" row states what was searched (Step 6)
 - [ ] Every task passes the "small enough" definition
 - [ ] Checkpoints exist between major phases
+- [ ] Every behavior claim cites evidence or is marked Assumption (Step 7)
+- [ ] Every flow traced past its last task (Step 7)
+- [ ] Independent review ran; verified findings applied (Step 8)
 - [ ] The human has reviewed and approved the plan
 
 ## See Also
@@ -291,4 +349,4 @@ project-wide Definition of Done, the standing bar every task clears before it co
 done. See `references/SKILL.md` § Standing rules where that exists; with no reference layer,
 the standing bar is whatever the codebase's own tests and build already enforce.
 
-**Last Updated**: 2026-10-19
+**Last Updated**: 2026-10-21
